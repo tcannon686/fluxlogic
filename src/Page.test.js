@@ -1,11 +1,12 @@
+/* eslint-env jest */
+
 import React from 'react'
-import './App.css'
+import { render } from '@testing-library/react'
 import Page from './Page'
 import logic from './logic'
 import { defaultTheme } from './themes'
 
-function App () {
-  /* TODO allow for editing, etc... */
+test('renders logic components', () => {
   const circuit = logic.circuit([
     logic.constantGate(),
     logic.buffer(),
@@ -27,11 +28,11 @@ function App () {
     gate.y = 1
   })
 
-  return (
-    <div className='App'>
-      <Page circuit={circuit} theme={defaultTheme} />
-    </div>
-  )
-}
+  const { getAllByAltText } = render(
+    <Page circuit={circuit} theme={defaultTheme} />)
 
-export default App
+  expect(getAllByAltText('buffer').length).toEqual(1)
+  expect(getAllByAltText('or').length).toEqual(1)
+  expect(getAllByAltText('constant').length).toEqual(1)
+  expect(getAllByAltText('and').length).toEqual(2)
+})
