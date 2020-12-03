@@ -87,7 +87,7 @@ function LogicGate (props) {
   )
 }
 
-function Page (props) {
+const Page = React.forwardRef((props, ref) => {
   const circuit = props.circuit
 
   /* An object that maps each pin to its position. */
@@ -104,7 +104,7 @@ function Page (props) {
   })()
 
   return (
-    <div className='page'>
+    <div className='page' ref={ref}>
       {
         /* Wires */
         circuit.gates.map(
@@ -134,6 +134,6 @@ function Page (props) {
       }
     </div>
   )
-}
+})
 
 export default Page

@@ -1,11 +1,13 @@
 .page {
   width: 8.5in;
   height: 11in;
-  border: 1px solid #aaaaaa;
   background: white;
   position: relative;
+  margin: auto;
+  box-shadow: 0 0 .05in #aaa;
+  margin-top: 0.1in;
+  margin-bottom: 0.1in;
 }
-
 .gate {
   position: absolute;
   left: 0;
