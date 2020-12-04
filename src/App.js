@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 function App () {
   const [circuit, setCircuit] = useState(() => logic.circuit([]))
+  const [selection, setSelection] = useState(false)
 
   /* Refs used for calculating the center of the page. */
   const appBarRef = React.createRef()
@@ -105,7 +106,15 @@ function App () {
           </ButtonGroup>
 
           <Tooltip title='Delete selection'>
-            <Button aria-label='delete'>
+            <Button
+              aria-label='delete'
+              onClick={() => {
+                const clone = { ...circuit }
+                clone.gates = clone.gates.filter(
+                  (gate) => !selection[gate.id])
+                setCircuit(clone)
+              }}
+            >
               <DeleteIcon />
             </Button>
           </Tooltip>
@@ -142,7 +151,15 @@ function App () {
       <main className={classes.content}>
         <Toolbar />
         <Container>
-          <Page circuit={circuit} theme={defaultTheme} ref={pageRef} />
+          <Page
+            circuit={circuit}
+            theme={defaultTheme}
+            ref={pageRef}
+            selection={selection}
+            onSelectionChanged={(selection) => {
+              setSelection(selection)
+            }}
+          />
         </Container>
       </main>
     </div>
