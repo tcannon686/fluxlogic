@@ -60,6 +60,14 @@ const defaultTheme = {
     })
 
     return ret
+  },
+
+  getWidth (gate) {
+    return 0.5
+  },
+
+  getHeight (gate) {
+    return 0.5
   }
 }
 

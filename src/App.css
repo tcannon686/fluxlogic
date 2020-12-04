@@ -8,10 +8,30 @@
   margin-top: 0.1in;
   margin-bottom: 0.1in;
 }
+
 .gate {
   position: absolute;
   left: 0;
   top: 0;
+  border: 1px solid #ffffff00;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.gate:hover {
+  border: 1px solid #1144ff;
+}
+
+.selectedGate {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0.5in;
+  height: 0.5in;
+  border: 1px solid #1144ff;
+  border-radius: 4px;
+  background: #1144ff33;
+  cursor: move;
 }
 
 .wire {
@@ -19,4 +39,10 @@
   left: 0;
   top: 0;
   border: 0.010in solid black;
+}
+
+.selection {
+  position: fixed;
+  border: 1px solid #1144ff;
+  background: #1144ff33;
 }
