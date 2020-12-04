@@ -159,6 +159,16 @@ function App () {
             onSelectionChanged={(selection) => {
               setSelection(selection)
             }}
+            onMove={(moveAmount) => {
+              const clone = { ...circuit }
+              clone.gates.forEach((gate) => {
+                if (selection[gate.id]) {
+                  gate.x += moveAmount[0]
+                  gate.y += moveAmount[1]
+                }
+              })
+              setCircuit(clone)
+            }}
           />
         </Container>
       </main>

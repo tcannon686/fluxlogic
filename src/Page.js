@@ -7,8 +7,8 @@ function LogicGate (props) {
   const theme = props.theme
 
   /* The position of the gate. */
-  const x = props.gate.x
-  const y = props.gate.y
+  const x = props.x
+  const y = props.y
 
   const width = theme.getWidth(props.gate)
   const height = theme.getWidth(props.gate)
@@ -59,6 +59,7 @@ function LogicGate (props) {
         src={theme.getGateSvg(props.gate)}
         style={{ position: 'absolute' }}
         onClick={props.onClick}
+        onMouseDown={props.onMouseDown}
       />
 
       {
@@ -145,6 +146,26 @@ const Page = React.forwardRef((props, ref) => {
   /* Object containing IDs of gates currently being selected. */
   const [toBeAddedToSelection, setToBeAddedToSelection] = useState({})
 
+  /* Whether or not the selected items are being dragged. */
+  const [isDragging, setIsDragging] = useState(false)
+
+  /*
+   * Whether or not the selected items were dragged (to prevent the click event
+   * from being fired after a drag.
+   */
+  const [didDrag, setDidDrag] = useState(false)
+
+  /* The amount to move the current selection. */
+  const [moveStart, setMoveStart] = useState([0, 0])
+  const [moveEnd, setMoveEnd] = useState([0, 0])
+
+  const moveAmount = isDragging
+    ? [
+      (moveEnd[0] - moveStart[0]) / 96,
+      (moveEnd[1] - moveStart[1]) / 96
+    ]
+    : [0, 0]
+
   /*
    * Function to convert from client coordianates to coordinates on the page.
    */
@@ -157,17 +178,16 @@ const Page = React.forwardRef((props, ref) => {
   }
 
   /* An object that maps each pin to its position. */
-  const pinPositions = (() => {
-    const initialState = {}
-    circuit.gates.forEach((gate) => {
-      Object.assign(initialState,
-        props.theme.getPinPositions(
-          gate,
-          gate.x || 0,
-          gate.y || 0))
-    })
-    return initialState
-  })()
+  const pinPositions = {}
+
+  /* calculate the pin positions. */
+  circuit.gates.forEach((gate) => {
+    const x = (gate.x || 0) + (props.selection[gate.id] ? moveAmount[0] : 0)
+    const y = (gate.y || 0) + (props.selection[gate.id] ? moveAmount[1] : 0)
+
+    Object.assign(pinPositions,
+      props.theme.getPinPositions(gate, x, y))
+  })
 
   /* Called when the bounds of the selection box changes. */
   const onSelectionChanged = (ul, br) => {
@@ -217,16 +237,37 @@ const Page = React.forwardRef((props, ref) => {
    */
   useEffect(() => {
     const onMouseUp = (e) => {
-      if (selectionStart) {
-        setSelectionStart(null)
+      if (isDragging) {
+        props.onMove(moveAmount)
+        setIsDragging(false)
+        e.stopPropagation()
+      } else if (selectionStart) {
         setToBeAddedToSelection({})
         props.onSelectionChanged(totalSelection)
-        e.preventDefault()
       }
+      setSelectionStart(null)
+      e.preventDefault()
     }
 
     window.addEventListener('mouseup', onMouseUp)
     return () => window.removeEventListener('mouseup', onMouseUp)
+  })
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (isDragging) {
+        setMoveEnd([
+          e.clientX,
+          e.clientY
+        ])
+      }
+
+      if (!didDrag) {
+        setDidDrag(true)
+      }
+    }
+    window.addEventListener('mousemove', onMouseMove)
+    return () => window.removeEventListener('mousemove', onMouseMove)
   })
 
   return (
@@ -260,25 +301,44 @@ const Page = React.forwardRef((props, ref) => {
 
       {
         /* Gates */
-        circuit.gates.map((gate) =>
-          (
+        circuit.gates.map((gate) => {
+          const x = (gate.x || 0) +
+            (props.selection[gate.id] ? moveAmount[0] : 0)
+          const y = (gate.y || 0) +
+            (props.selection[gate.id] ? moveAmount[1] : 0)
+
+          return (
             <LogicGate
               gate={gate}
+              x={x}
+              y={y}
               key={gate.id}
               theme={props.theme}
               selection={totalSelection}
               onClick={(e) => {
-                const newSelection = {}
-                if (e.shiftKey) {
-                  Object.assign(newSelection, props.selection)
+                if (!didDrag) {
+                  const newSelection = {}
+                  if (e.shiftKey) {
+                    Object.assign(newSelection, props.selection)
+                  }
+                  newSelection[gate.id] = !newSelection[gate.id]
+                  props.onSelectionChanged(newSelection)
+                  e.stopPropagation()
                 }
-                newSelection[gate.id] = !newSelection[gate.id]
-                props.onSelectionChanged(newSelection)
+              }}
+              onMouseDown={(e) => {
+                setMoveStart([e.clientX, e.clientY])
+                setMoveEnd([e.clientX, e.clientY])
+                setDidDrag(false)
+                if (props.selection[gate.id]) {
+                  setIsDragging(true)
+                }
                 e.stopPropagation()
+                e.preventDefault()
               }}
             />
           )
-        )
+        })
       }
 
       {

@@ -29,7 +29,7 @@ test('renders logic components', () => {
   })
 
   const { getAllByAltText } = render(
-    <Page circuit={circuit} theme={defaultTheme} />)
+    <Page selection={{}} circuit={circuit} theme={defaultTheme} />)
 
   expect(getAllByAltText('buffer').length).toEqual(1)
   expect(getAllByAltText('or').length).toEqual(1)
