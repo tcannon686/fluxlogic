@@ -18,6 +18,24 @@ function LogicGate (props) {
 
   const isSelected = props.selection[props.gate.id]
 
+  const Pin = (pinProps) => (
+    <img
+      alt=''
+      src={theme.getPinSvg(pinProps.pin)}
+      onMouseDown={
+        (e) => props.onPinMouseDown(e, pinProps.pin.id, pinProps.isOutput)
+      }
+      onMouseUp={
+        (e) => props.onPinMouseUp(e, pinProps.pin.id, pinProps.isOutput)
+      }
+      style={{
+        left: `${pinPositions[pinProps.pin.id].x - x - 0.0625}in`,
+        top: `${pinPositions[pinProps.pin.id].y - y - 0.0625}in`
+      }}
+      className='pin'
+    />
+  )
+
   return (
     <div
       style={{
@@ -64,37 +82,44 @@ function LogicGate (props) {
 
       {
         /* Input pins */
-        props.gate.inputs.map((pin, i) =>
-          <img
-            alt={`input ${i}`}
-            src={theme.getPinSvg(pin)}
-            key={pin.id}
-            style={{
-              left: `${pinPositions[pin.id].x - x - 0.0625}in`,
-              top: `${pinPositions[pin.id].y - y - 0.0625}in`,
-              position: 'absolute'
-            }}
-          />
+        props.gate.inputs.map((pin) =>
+          <Pin pin={pin} isOutput={false} key={pin.id} />
         )
       }
 
       {
         /* Output pins */
-        props.gate.outputs.map((pin, i) =>
-          <img
-            alt={`output ${i}`}
-            src={theme.getPinSvg(pin)}
-            key={pin.id}
-            style={{
-              left: `${0.5 - 0.0625}in`,
-              top: `${0.25 - 0.0625}in`,
-              position: 'absolute'
-            }}
-          />
+        props.gate.outputs.map((pin) =>
+          <Pin pin={pin} isOutput key={pin.id} />
         )
       }
     </div>
   )
+}
+
+function PreviewWire (props) {
+  const [end, setEnd] = useState([props.x0, props.y0])
+
+  const onMouseMove = (e) => {
+    setEnd(props.clientToPage([e.clientX, e.clientY]))
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousemove', onMouseMove)
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove)
+    }
+  })
+
+  if (props.isOutputPin) {
+    return (
+      <Wire x0={props.x0} y0={props.y0} x1={end[0]} y1={end[1]} />
+    )
+  } else {
+    return (
+      <Wire x1={props.x0} y1={props.y0} x0={end[0]} y0={end[1]} />
+    )
+  }
 }
 
 function SelectionBox (props) {
@@ -166,6 +191,10 @@ const Page = React.forwardRef((props, ref) => {
     ]
     : [0, 0]
 
+  const [wireStartPin, setWireStartPin] = useState(null)
+  /* Whether or not the pin being dragged from is an output pin. */
+  const [wireStartPinIsOutput, setWireStartPinIsOutput] = useState(false)
+
   /*
    * Function to convert from client coordianates to coordinates on the page.
    */
@@ -185,8 +214,7 @@ const Page = React.forwardRef((props, ref) => {
     const x = (gate.x || 0) + (props.selection[gate.id] ? moveAmount[0] : 0)
     const y = (gate.y || 0) + (props.selection[gate.id] ? moveAmount[1] : 0)
 
-    Object.assign(pinPositions,
-      props.theme.getPinPositions(gate, x, y))
+    Object.assign(pinPositions, props.theme.getPinPositions(gate, x, y))
   })
 
   /* Called when the bounds of the selection box changes. */
@@ -246,6 +274,10 @@ const Page = React.forwardRef((props, ref) => {
         props.onSelectionChanged(totalSelection)
       }
       setSelectionStart(null)
+
+      if (wireStartPin !== null) {
+        setWireStartPin(null)
+      }
       e.preventDefault()
     }
 
@@ -292,10 +324,10 @@ const Page = React.forwardRef((props, ref) => {
             .map((pin) =>
               <Wire
                 key={`${pin.id}-${pin.connections[0].id}`}
-                x0={pinPositions[pin.id].x}
-                y0={pinPositions[pin.id].y}
-                x1={pinPositions[pin.connections[0]].x}
-                y1={pinPositions[pin.connections[0]].y}
+                x0={pinPositions[pin.connections[0]].x}
+                y0={pinPositions[pin.connections[0]].y}
+                x1={pinPositions[pin.id].x}
+                y1={pinPositions[pin.id].y}
               />))
       }
 
@@ -336,6 +368,26 @@ const Page = React.forwardRef((props, ref) => {
                 e.stopPropagation()
                 e.preventDefault()
               }}
+              onPinMouseDown={(e, id, isOutputPin) => {
+                setWireStartPin(id)
+                setWireStartPinIsOutput(isOutputPin)
+                e.stopPropagation()
+                e.preventDefault()
+              }}
+              onPinMouseUp={(e, id, isOutputPin) => {
+                /*
+                 * Add a wire if the wire start pin is different from the wire
+                 * end pin, and both of the pins are not output pins
+                 */
+                if (wireStartPin !== null &&
+                    wireStartPin !== id &&
+                    isOutputPin ^ wireStartPinIsOutput) {
+                  props.onWireAdded(wireStartPin, id)
+                  e.stopPropagation()
+                  e.preventDefault()
+                }
+                setWireStartPin(null)
+              }}
             />
           )
         })
@@ -346,6 +398,16 @@ const Page = React.forwardRef((props, ref) => {
           <SelectionBox
             selectionStart={selectionStart}
             onSelectionChanged={onSelectionChanged}
+          />
+        )
+      }
+      {
+        wireStartPin !== null && (
+          <PreviewWire
+            x0={pinPositions[wireStartPin].x}
+            y0={pinPositions[wireStartPin].y}
+            clientToPage={clientToPage}
+            isOutputPin={wireStartPinIsOutput}
           />
         )
       }

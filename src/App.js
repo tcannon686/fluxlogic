@@ -74,6 +74,97 @@ function App () {
 
   const classes = useStyles()
 
+  const deleteSelection = () => {
+    const clone = { ...circuit }
+
+    /* Remove the selected gates. */
+    clone.gates = clone.gates.filter((gate) => !selection[gate.id])
+
+    /* Create an object containing the IDs of all valid pins. */
+    const validPins = Object.fromEntries(clone.gates.reduce(
+      (t, gate) => t.concat(
+        gate.inputs.map((pin) => pin.id),
+        gate.outputs.map((pin) => pin.id)),
+      []
+    ).map((id) => [id, true]))
+
+    /* Remove all connections that point to a deleted pin. */
+    clone.gates = clone.gates.map((gate) => {
+      const gateClone = { ...gate }
+      const updatePin = (pin) => {
+        return {
+          ...pin,
+          connections: pin.connections.filter((id) => validPins[id])
+        }
+      }
+
+      gateClone.inputs = gateClone.inputs.map(updatePin)
+      gateClone.outputs = gateClone.outputs.map(updatePin)
+      return gateClone
+    })
+
+    setCircuit(clone)
+  }
+
+  const addWire = (from, to) => {
+    const clone = { ...circuit }
+
+    /*
+     * Function that takes in a pin, clones it and adds a connection if it is
+     * the from or to pin. Returns the pin otherwise.
+     */
+    const updatePin = (pin) => {
+      if (pin.id === from && pin.connections.length === 0) {
+        return { ...pin, connections: [to] }
+      } else if (pin.id === to && pin.connections.length === 0) {
+        return { ...pin, connections: [from] }
+      } else {
+        return pin
+      }
+    }
+
+    /* Only update if the input pin has no connections. */
+    let shouldUpdate = false
+
+    clone.gates = clone.gates.map((gate) => {
+      let hasPin = false
+      const inputs = gate.inputs.map((pin) => {
+        const r = updatePin(pin)
+        if (r !== pin) { hasPin = true }
+        return r
+      })
+
+      /* If the gate has the pin, clone the gate. */
+      if (hasPin) {
+        shouldUpdate = true
+        return { ...gate, inputs }
+      } else {
+        return gate
+      }
+    })
+
+    if (shouldUpdate) {
+      /* Update output pin. */
+      clone.gates = clone.gates.map((gate) => {
+        let hasPin = false
+        const outputs = gate.outputs.map((pin) => {
+          const r = updatePin(pin)
+          if (r !== pin) { hasPin = true }
+          return r
+        })
+
+        /* If the gate has the pin, clone it. */
+        if (hasPin) {
+          return { ...gate, outputs }
+        } else {
+          return gate
+        }
+      })
+
+      setCircuit(clone)
+    }
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -84,7 +175,8 @@ function App () {
           className={classes.drawerContent}
           onSelect={(factory) => {
             /* Clone the circuit. */
-            const clone = Object.assign({}, circuit)
+            const clone = { ...circuit }
+            clone.gates = [...clone.gates]
 
             /* Place the gate. */
             const gate = factory()
@@ -138,12 +230,7 @@ function App () {
           <Tooltip title='Delete selection'>
             <Button
               aria-label='delete'
-              onClick={() => {
-                const clone = { ...circuit }
-                clone.gates = clone.gates.filter(
-                  (gate) => !selection[gate.id])
-                setCircuit(clone)
-              }}
+              onClick={deleteSelection}
               className={classes.menuButton}
             >
               <DeleteIcon />
@@ -175,14 +262,18 @@ function App () {
             }}
             onMove={(moveAmount) => {
               const clone = { ...circuit }
-              clone.gates.forEach((gate) => {
+              clone.gates = clone.gates.map((gate) => {
                 if (selection[gate.id]) {
+                  /* Copy the gate. */
+                  gate = { ...gate }
                   gate.x += moveAmount[0]
                   gate.y += moveAmount[1]
                 }
+                return gate
               })
               setCircuit(clone)
             }}
+            onWireAdded={addWire}
           />
         </Container>
       </main>

@@ -1,74 +1,43 @@
 import React from 'react'
 
-/* A wire component. */
 function Wire (props) {
-  let x0 = Number(props.x0)
-  let y0 = Number(props.y0)
-  let x1 = Number(props.x1)
-  let y1 = Number(props.y1)
+  const x0 = Number(props.x0)
+  const y0 = Number(props.y0)
+  const x1 = Number(props.x1)
+  const y1 = Number(props.y1)
 
-  /* Swap if x0 > x1. */
-  if (x0 > x1) {
-    [x0, x1, y0, y1] = [x1, x0, y1, y0]
-  }
+  const curve = Math.min(Math.abs(y1 - y0), Math.abs(x1 - x0))
+  const padding = 0.1 + (x1 < x0 ? curve * 0.25 : 0)
 
-  /* The styles for each of the two divs that make up the wire. */
-  let style0
-  let style1
+  const l = Math.min(x0, x1) - padding
+  const t = Math.min(y0, y1) - padding
 
-  /* Calculate the border radius. */
-  const borderRadius = Math.min(0.05, Math.abs(y1 - y0) / 2)
+  const c0 = x0 - l + curve
+  const c1 = x1 - l - curve
 
-  /* Styles for if y0 is on top. */
-  if (y1 > y0) {
-    style0 = {
-      borderLeft: 'none',
-      borderBottom: 'none',
-      left: `${x0}in`,
-      top: `${y0}in`,
-      width: `${(x1 - x0) / 2}in`,
-      height: `${(y1 - y0) / 2}in`,
-      borderRadius: `0 ${borderRadius}in 0 0`
-    }
+  const width = Math.abs(x1 - x0) + padding * 2
+  const height = Math.abs(y1 - y0) + padding * 2
 
-    style1 = {
-      borderRight: 'none',
-      borderTop: 'none',
-      left: `${(x0 + x1) / 2}in`,
-      top: `${(y0 + y1) / 2}in`,
-      width: `${(x1 - x0) / 2}in`,
-      height: `${(y1 - y0) / 2}in`,
-      borderRadius: `0 0 0 ${borderRadius}in`
-    }
-
-  /* Styles for if y1 is on top. */
-  } else {
-    style0 = {
-      borderLeft: 'none',
-      borderTop: 'none',
-      left: `${x0}in`,
-      top: `${(y1 + y0) / 2}in`,
-      width: `${(x1 - x0) / 2}in`,
-      height: `${(y0 - y1) / 2}in`,
-      borderRadius: `0 0 ${borderRadius}in 0`
-    }
-
-    style1 = {
-      borderRight: 'none',
-      borderBottom: 'none',
-      left: `${(x0 + x1) / 2}in`,
-      top: `${y1}in`,
-      width: `${(x1 - x0) / 2}in`,
-      height: `${-(y1 - y0) / 2}in`,
-      borderRadius: `${borderRadius}in 0 0 0`
-    }
-  }
+  const d = `M ${x0 - l} ${y0 - t} ` +
+            `C ${c0} ${y0 - t}, ${c1} ${y1 - t}, ${x1 - l} ${y1 - t}`
 
   return (
-    <div>
-      <div className='wire' style={style0} />
-      <div className='wire' style={style1} />
-    </div>
+    <svg
+      width={`${width}in`}
+      height={`${height}in`}
+      viewBox={`0 0 ${width} ${height}`}
+      style={{
+        position: 'absolute',
+        left: `${l}in`,
+        top: `${t}in`,
+        pointerEvents: 'none'
+      }}
+    >
+      <path
+        d={d}
+        stroke='black' strokeWidth='0.01' fill='transparent'
+      />
+    </svg>
   )
 }
 

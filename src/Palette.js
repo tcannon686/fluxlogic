@@ -53,11 +53,6 @@ function Palette (props) {
         text='+1'
         onClick={() => props.onSelect(() => logic.constantGate(true))}
       />
-      <PaletteItem
-        svg={OneGateSvg}
-        text='+1'
-        onClick={() => props.onSelect(() => logic.constantGate(true))}
-      />
     </Grid>
   )
 }
