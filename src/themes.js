@@ -13,11 +13,13 @@ import PinInvertedSvg from './assets/pin-inverted.svg'
 import BufferGateSvg from './assets/buffer-gate.svg'
 import OneGateSvg from './assets/one-gate.svg'
 import ZeroGateSvg from './assets/zero-gate.svg'
+import LedSvg from './assets/led.svg'
 
 const defaultThemeSvgs = {
   and: AndGateSvg,
   or: OrGateSvg,
-  buffer: BufferGateSvg
+  buffer: BufferGateSvg,
+  led: LedSvg
 }
 
 const defaultTheme = {

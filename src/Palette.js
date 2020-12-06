@@ -8,6 +8,8 @@ import AndGateSvg from './assets/and-gate.svg'
 import OrGateSvg from './assets/or-gate.svg'
 import OneGateSvg from './assets/one-gate.svg'
 import ZeroGateSvg from './assets/zero-gate.svg'
+import LedSvg from './assets/led.svg'
+import BufferGateSvg from './assets/buffer-gate.svg'
 
 import logic from './logic'
 
@@ -52,6 +54,16 @@ function Palette (props) {
         svg={OneGateSvg}
         text='+1'
         onClick={() => props.onSelect(() => logic.constantGate(true))}
+      />
+      <PaletteItem
+        svg={BufferGateSvg}
+        text='buffer'
+        onClick={() => props.onSelect(() => logic.buffer())}
+      />
+      <PaletteItem
+        svg={LedSvg}
+        text='LED'
+        onClick={() => props.onSelect(() => logic.led())}
       />
     </Grid>
   )

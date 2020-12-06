@@ -12,7 +12,8 @@ test('renders logic components', () => {
     logic.buffer(),
     logic.andGate(),
     logic.andGate(),
-    logic.orGate()
+    logic.orGate(),
+    logic.led()
   ])
 
   logic.connect(circuit.gates[0].outputs[0], circuit.gates[1].inputs[0])
@@ -20,6 +21,7 @@ test('renders logic components', () => {
   logic.connect(circuit.gates[2].outputs[0], circuit.gates[3].inputs[1])
   logic.connect(circuit.gates[3].outputs[0], circuit.gates[4].inputs[0])
   logic.connect(circuit.gates[3].outputs[0], circuit.gates[4].inputs[1])
+  logic.connect(circuit.gates[4].outputs[0], circuit.gates[5].inputs[0])
 
   circuit.gates[0].outputs[0].isInverted = true
 
