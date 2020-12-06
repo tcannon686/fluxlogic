@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './App.css'
 
 /* Material UI components. */
 import CssBaseline from '@material-ui/core/CssBaseline'

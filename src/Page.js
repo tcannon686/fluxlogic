@@ -1,10 +1,69 @@
 import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import { fade } from '@material-ui/core/styles/colorManipulator'
 
 import Wire from './Wire'
 
+const useStyles = makeStyles((theme) => ({
+  selectionBox: {
+    position: 'fixed',
+    border: `1px solid ${theme.palette.primary.main}`,
+    background: fade(theme.palette.primary.main, 0.25),
+    pointerEvents: 'none'
+  },
+
+  selectedGate: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    border: `1px solid ${theme.palette.primary.main}`,
+    background: fade(theme.palette.primary.main, 0.25),
+    borderRadius: '4px',
+    cursor: 'move'
+  },
+
+  gate: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    border: '1px solid #ffffff00',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    '&:hover': {
+      border: `1px solid ${theme.palette.primary.main}`
+    }
+  },
+
+  pin: {
+    position: 'absolute',
+    margin: 0,
+    borderRadius: '4px',
+    cursor: 'pointer',
+    '&:hover': {
+      border: `1px solid ${theme.palette.primary.main}`,
+      margin: '-1px'
+    }
+  },
+
+  page: {
+    width: '8.5in',
+    height: '11in',
+    background: 'white',
+    position: 'relative',
+    margin: 'auto',
+    boxShadow: '0 0 .05in #aaa',
+    marginBottom: '0.1in'
+  }
+}))
+
 function LogicGate (props) {
-  /* The object responsible for placing the pins and chooising the style. */
+  /*
+   * The object responsible for placing the pins and choosing the SVGs. Note
+   * that this is not related to the material-ui theme.
+   */
   const theme = props.theme
+
+  const classes = useStyles()
 
   /* The position of the gate. */
   const x = props.x
@@ -32,7 +91,7 @@ function LogicGate (props) {
         left: `${pinPositions[pinProps.pin.id].x - x - 0.0625}in`,
         top: `${pinPositions[pinProps.pin.id].y - y - 0.0625}in`
       }}
-      className='pin'
+      className={classes.pin}
     />
   )
 
@@ -44,7 +103,7 @@ function LogicGate (props) {
         width: `${width}in`,
         height: `${height}in`
       }}
-      className={isSelected ? 'selectedGate' : 'gate'}
+      className={isSelected ? classes.selectedGate : classes.gate}
     >
 
       {
@@ -125,6 +184,8 @@ function PreviewWire (props) {
 function SelectionBox (props) {
   const [selectionEnd, setSelectionEnd] = useState(props.selectionStart)
 
+  const classes = useStyles()
+
   const onMouseMove = (e) => {
     setSelectionEnd([e.clientX, e.clientY])
     props.onSelectionChanged(
@@ -154,7 +215,7 @@ function SelectionBox (props) {
    */
   return hasMoved && (
     <div
-      className='selection' style={{
+      className={classes.selectionBox} style={{
         left: Math.min(props.selectionStart[0], selectionEnd[0]),
         top: Math.min(props.selectionStart[1], selectionEnd[1]),
         width: Math.abs(selectionEnd[0] - props.selectionStart[0]),
@@ -167,6 +228,8 @@ function SelectionBox (props) {
 const Page = React.forwardRef((props, ref) => {
   const circuit = props.circuit
   const [selectionStart, setSelectionStart] = useState(null)
+
+  const classes = useStyles()
 
   /* Object containing IDs of gates currently being selected. */
   const [toBeAddedToSelection, setToBeAddedToSelection] = useState({})
@@ -304,7 +367,7 @@ const Page = React.forwardRef((props, ref) => {
 
   return (
     <div
-      className='page' ref={ref}
+      className={classes.page} ref={ref}
       onMouseDown={(e) => {
         setSelectionStart([e.clientX, e.clientY])
 
