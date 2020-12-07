@@ -23,16 +23,17 @@ const useStyles = makeStyles((theme) => ({
 function PreviewWire (props) {
   const [end, setEnd] = useState([props.x0, props.y0])
 
-  const onMouseMove = (e) => {
-    setEnd(props.clientToPage([e.clientX, e.clientY]))
-  }
+  const clientToPage = props.clientToPage
 
   useEffect(() => {
+    const onMouseMove = (e) => {
+      setEnd(clientToPage([e.clientX, e.clientY]))
+    }
     document.addEventListener('mousemove', onMouseMove)
     return () => {
       document.removeEventListener('mousemove', onMouseMove)
     }
-  })
+  }, [clientToPage])
 
   if (props.isOutputPin) {
     return (
@@ -183,7 +184,7 @@ const Page = React.forwardRef((props, ref) => {
     }
     window.addEventListener('mousemove', onMouseMove)
     return () => window.removeEventListener('mousemove', onMouseMove)
-  })
+  }, [isDragging, didDrag])
 
   return (
     <div

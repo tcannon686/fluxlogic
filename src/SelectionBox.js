@@ -17,27 +17,31 @@ const useStyles = makeStyles((theme) => ({
 function SelectionBox (props) {
   const [selectionEnd, setSelectionEnd] = useState(props.selectionStart)
 
+  const selectionStart = props.selectionStart
+  const onSelectionChanged = props.onSelectionChanged
+
   const classes = useStyles()
 
-  const onMouseMove = (e) => {
-    setSelectionEnd([e.clientX, e.clientY])
-    props.onSelectionChanged(
-      [
-        Math.min(props.selectionStart[0], selectionEnd[0]),
-        Math.min(props.selectionStart[1], selectionEnd[1])
-      ],
-      [
-        Math.max(props.selectionStart[0], selectionEnd[0]),
-        Math.max(props.selectionStart[1], selectionEnd[1])
-      ])
-  }
-
   useEffect(() => {
+    const onMouseMove = (e) => {
+      const end = [e.clientX, e.clientY]
+      setSelectionEnd(end)
+      onSelectionChanged(
+        [
+          Math.min(selectionStart[0], end[0]),
+          Math.min(selectionStart[1], end[1])
+        ],
+        [
+          Math.max(selectionStart[0], end[0]),
+          Math.max(selectionStart[1], end[1])
+        ])
+    }
+
     document.addEventListener('mousemove', onMouseMove)
     return () => {
       document.removeEventListener('mousemove', onMouseMove)
     }
-  })
+  }, [selectionStart, onSelectionChanged])
 
   const hasMoved = (
     selectionEnd[0] !== props.selectionStart[0] &&
