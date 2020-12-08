@@ -7,11 +7,11 @@ test('simulates constant gate', () => {
   const circuit = logic.circuit([gate])
 
   let state = logic.nextState(circuit)
-  expect(state.getOutputs(gate)).toEqual([false])
+  expect(logic.getOutputs(gate, state)).toEqual([false])
 
   state = logic.nextState(circuit, state)
 
-  expect(state.getOutputs(gate)).toEqual([true])
+  expect(logic.getOutputs(gate, state)).toEqual([true])
 })
 
 test('simulates and-gate', () => {
@@ -34,7 +34,7 @@ test('simulates and-gate', () => {
     gates[1].value = b
 
     const state = logic.fastForward(circuit, 10)
-    expect(state.getOutputs(gates[2])).toEqual([a && b])
+    expect(logic.getOutputs(gates[2], state)).toEqual([a && b])
   }
 })
 
@@ -58,7 +58,7 @@ test('simulates or-gate', () => {
     gates[1].value = b
 
     const state = logic.fastForward(circuit, 10)
-    expect(state.getOutputs(gates[2])).toEqual([a || b])
+    expect(logic.getOutputs(gates[2], state)).toEqual([a || b])
   }
 })
 
@@ -88,7 +88,7 @@ test('simulates (a or b) and c', () => {
     gates[2].value = c
 
     const state = logic.fastForward(circuit, 10)
-    expect(state.getOutputs(gates[4])).toEqual([(a || b) && c])
+    expect(logic.getOutputs(gates[4], state)).toEqual([(a || b) && c])
   }
 })
 
@@ -118,7 +118,7 @@ test('simulates (a and b) or c', () => {
     gates[2].value = c
 
     const state = logic.fastForward(circuit, 10)
-    expect(state.getOutputs(gates[4])).toEqual([(a && b) || c])
+    expect(logic.getOutputs(gates[4], state)).toEqual([(a && b) || c])
   }
 })
 
@@ -150,7 +150,7 @@ test('simulates !(a and b) or c', () => {
     gates[2].value = c
 
     const state = logic.fastForward(circuit, 10)
-    expect(state.getOutputs(gates[4])).toEqual([!(a && b) || c])
+    expect(logic.getOutputs(gates[4], state)).toEqual([!(a && b) || c])
   }
 })
 
@@ -185,7 +185,7 @@ test('simulates !!(!a and !b) or c', () => {
     gates[2].value = c
 
     const state = logic.fastForward(circuit, 10)
-    expect(state.getOutputs(gates[4])).toEqual([(!a && !b) || c])
+    expect(logic.getOutputs(gates[4], state)).toEqual([(!a && !b) || c])
   }
 })
 
@@ -211,25 +211,25 @@ test('simulates SR-latch', () => {
   gates[0].value = true
 
   state = logic.fastForward(circuit, 10, state)
-  expect(state.getOutputs(gates[2])).toEqual([false])
-  expect(state.getOutputs(gates[3])).toEqual([true])
+  expect(logic.getOutputs(gates[2], state)).toEqual([false])
+  expect(logic.getOutputs(gates[3], state)).toEqual([true])
 
   gates[0].value = false
 
   state = logic.fastForward(circuit, 10, state)
-  expect(state.getOutputs(gates[2])).toEqual([false])
-  expect(state.getOutputs(gates[3])).toEqual([true])
+  expect(logic.getOutputs(gates[2], state)).toEqual([false])
+  expect(logic.getOutputs(gates[3], state)).toEqual([true])
 
   gates[1].value = true
 
   state = logic.fastForward(circuit, 10, state)
-  expect(state.getOutputs(gates[2])).toEqual([true])
-  expect(state.getOutputs(gates[3])).toEqual([false])
+  expect(logic.getOutputs(gates[2], state)).toEqual([true])
+  expect(logic.getOutputs(gates[3], state)).toEqual([false])
 
   gates[1].value = false
   state = logic.fastForward(circuit, 10, state)
-  expect(state.getOutputs(gates[2])).toEqual([true])
-  expect(state.getOutputs(gates[3])).toEqual([false])
+  expect(logic.getOutputs(gates[2], state)).toEqual([true])
+  expect(logic.getOutputs(gates[3], state)).toEqual([false])
 })
 
 test('simulates LED', () => {
@@ -237,7 +237,7 @@ test('simulates LED', () => {
   const circuit = logic.circuit(gates)
 
   const state = logic.fastForward(circuit, 10)
-  expect(state.getInputs(gates[0])).toEqual([false])
+  expect(logic.getInputs(gates[0], state)).toEqual([false])
 })
 
 test('simulates buffer', () => {
@@ -250,9 +250,43 @@ test('simulates buffer', () => {
   logic.connect(gates[0].outputs[0], gates[1].inputs[0])
 
   let state = logic.fastForward(circuit, 10)
-  expect(state.getOutputs(gates[1])).toEqual([false])
+  expect(logic.getOutputs(gates[1], state)).toEqual([false])
 
   gates[0].value = true
   state = logic.fastForward(circuit, 10)
-  expect(state.getOutputs(gates[1])).toEqual([true])
+  expect(logic.getOutputs(gates[1], state)).toEqual([true])
+})
+
+test('can serialize state', () => {
+  const gates = [
+    logic.constantGate(false),
+    logic.buffer()
+  ]
+
+  const circuit = logic.circuit(gates)
+  logic.connect(gates[0].outputs[0], gates[1].inputs[0])
+
+  const state = logic.fastForward(circuit, 10)
+  expect(state).toHaveProperty('outputs')
+
+  const json = JSON.stringify(state)
+  expect(typeof json).toBe('string')
+  expect(json.length).toBeGreaterThan(10)
+})
+
+test('can serialize circuit', () => {
+  const gates = [
+    logic.constantGate(false),
+    logic.constantGate(true),
+    logic.buffer(),
+    logic.andGate(),
+    logic.orGate(),
+    logic.led()
+  ]
+
+  const circuit = logic.circuit(gates)
+  logic.connect(gates[0].outputs[0], gates[2].inputs[0])
+
+  const json = JSON.stringify(circuit)
+  expect(json.length).toBeGreaterThan(10)
 })

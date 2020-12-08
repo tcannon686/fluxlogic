@@ -1,4 +1,15 @@
 
+/*
+ * An object mapping gate types to functions.
+ */
+const nextOutputFunctions = {
+  and: (gate, inputs) => [inputs.every((x) => x)],
+  or: (gate, inputs) => [inputs.some((x) => x)],
+  constant: (gate, inputs) => [gate.value],
+  led: (gate, inputs) => [],
+  buffer: (gate, inputs) => inputs
+}
+
 /** Connect to logic pins by a wire. */
 function connect (a, b) {
   a.connections.push(b.id)
@@ -6,37 +17,11 @@ function connect (a, b) {
 }
 
 /**
- * Creates a circuit with the given gates. */
+ * Creates a circuit with the given gates.
+ */
 function circuit (gates) {
   return {
-    gates,
-
-    /**
-     * An object mapping gate types to functions. This way, the types of gates
-     * can be extended by adding a gate type here.
-     */
-    nextOutputFunctions: {
-      and: (gate, inputs) => [inputs.every((x) => x)],
-      or: (gate, inputs) => [inputs.some((x) => x)],
-      constant: (gate, inputs) => [gate.value],
-      led: (gate, inputs) => [],
-      buffer: (gate, inputs) => inputs
-    },
-
-    /**
-     * Evaluates the next set of outputs for the given gate, given a list of
-     * inputs. The advantage of using this function over having a function in
-     * each gate object is that we can use a "type" field to specify the gate.
-     * This makes it easier to use JSON.stringify() on the data, and makes it
-     * easier to put together a UI.
-     */
-    nextOutputs (gate, inputs) {
-      if (this.nextOutputFunctions[gate.type]) {
-        return this.nextOutputFunctions[gate.type](gate, inputs)
-      } else {
-        throw new Error(`Unknown gate type '${gate.type}'`)
-      }
-    }
+    gates
   }
 }
 
@@ -104,25 +89,29 @@ function buffer () {
 /**
  * Computes a state object to represent the current state of the simulation for
  * the given circuit. If prevState is passed, returns the next state after the
- * given state. The state object contains the following methods:
- *  - getInputs(gate)
- *  - getOutputs(gate)
+ * given state.
  *
- * getInputs(gate) returns a list of booleans representing the inputs to the
- * given gate. getOutputs(gate) returns a list of booleans representing the
- * outputs from the given gate.
+ * The state object is an object containing an outputs field, which is an object
+ * that maps each pin ID to a boolean value. For example, if a pin with ID 2 has
+ * an output of true, the state object would look something like this:
+ * { outputs: { 2: true } }
+ *
+ * To calculate the inputs and outputs of individual gates, the getInputs and
+ * getOutputs helper functions can be used.
  */
 function nextState (circuit, prevState) {
-  const outputs = {}
+  const state = { outputs: {} }
 
   if (prevState) {
     for (const gate of circuit.gates) {
       /* Find the inputs to the gate. */
-      const inputs = prevState.getInputs(gate)
-      const nextOutputs = circuit.nextOutputs(gate, inputs)
+      const inputs = getInputs(gate, prevState)
+
+      /* Calculate the next output. */
+      const nextOutputs = nextOutputFunctions[gate.type](gate, inputs)
 
       for (let i = 0; i < nextOutputs.length; i++) {
-        outputs[gate.outputs[i].id] = (
+        state.outputs[gate.outputs[i].id] = (
           nextOutputs[i] ^ gate.outputs[i].isInverted) === 1
       }
     }
@@ -130,28 +119,29 @@ function nextState (circuit, prevState) {
     /* Initialize all outputs to false. */
     for (const gate of circuit.gates) {
       for (const pin of gate.outputs) {
-        outputs[pin.id] = false
+        state.outputs[pin.id] = false
       }
     }
   }
 
-  const ret = {
-    circuit,
+  return state
+}
 
-    /** Returns a list of input booleans for the gate. */
-    getInputs (gate) {
-      return gate.inputs
-        .map((pin) => (outputs[pin.connections[0]] ^ pin.isInverted) === 1)
-    },
+/**
+ * Returns a list of input booleans for the gate given the current simulation
+ * state.
+ */
+function getInputs (gate, state) {
+  return gate.inputs
+    .map((pin) => (state.outputs[pin.connections[0]] ^ pin.isInverted) === 1)
+}
 
-    /** Returns a list of output booleans for the gate. */
-    getOutputs (gate) {
-      return gate.outputs.map((pin) => outputs[pin.id])
-    }
-
-  }
-
-  return ret
+/**
+ * Returns a list of output booleans for the gate given the current simulation
+ * state.
+ */
+function getOutputs (gate, state) {
+  return gate.outputs.map((pin) => state.outputs[pin.id])
 }
 
 /**
@@ -176,6 +166,8 @@ function nextId () {
 export default {
   connect,
   nextState,
+  getOutputs,
+  getInputs,
   fastForward,
   circuit,
   andGate,
