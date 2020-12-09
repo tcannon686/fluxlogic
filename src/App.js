@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 /* Material UI components. */
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -12,6 +12,7 @@ import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
 
 /* Icons. */
+import StopIcon from '@material-ui/icons/Stop'
 import PlayIcon from '@material-ui/icons/PlayArrow'
 import DeleteIcon from '@material-ui/icons/Delete'
 import RedoIcon from '@material-ui/icons/Redo'
@@ -28,6 +29,9 @@ import Palette from './Palette'
 /* Logic components. */
 import logic from './logic'
 import { defaultTheme } from './themes'
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import SimWorker from 'workerize-loader!./sim.worker'
 
 const drawerWidth = 256
 
@@ -66,12 +70,41 @@ const useStyles = makeStyles((theme) => ({
 function App () {
   const [circuit, setCircuit] = useState(() => logic.circuit([]))
   const [selection, setSelection] = useState(false)
+  const [simState, setSimState] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const simWorker = useRef(new SimWorker())
 
   /* Refs used for calculating the center of the page. */
   const appBarRef = React.createRef()
   const pageRef = React.createRef()
 
   const classes = useStyles()
+
+  const onPlayButtonClicked = () => {
+    if (!isPlaying) {
+      simWorker.current.startSimulation(circuit)
+      setIsPlaying(true)
+    } else {
+      simWorker.current.stopSimulation()
+      setIsPlaying(false)
+    }
+  }
+
+  useEffect(() => {
+    let shouldLoop = isPlaying
+
+    const loop = (state) => {
+      if (shouldLoop) {
+        setSimState(state)
+        simWorker.current.getState().then(loop)
+      } else {
+        setSimState(null)
+      }
+    }
+    loop(null)
+
+    return () => { shouldLoop = false }
+  }, [isPlaying])
 
   const deleteSelection = () => {
     const clone = { ...circuit }
@@ -214,9 +247,14 @@ function App () {
           </ButtonGroup>
 
           <ButtonGroup className={classes.menuButtonGroup}>
-            <Tooltip title='Start simulation'>
-              <Button aria-label='play'>
-                <PlayIcon />
+            <Tooltip title={isPlaying ? 'Stop simulation' : 'Start simulation'}>
+              <Button
+                aria-label={isPlaying ? 'stop' : 'start'}
+                onClick={onPlayButtonClicked}
+              >
+                {
+                  isPlaying ? <StopIcon /> : <PlayIcon />
+                }
               </Button>
             </Tooltip>
             <Tooltip title='Pause simulation'>
@@ -256,6 +294,7 @@ function App () {
             theme={defaultTheme}
             ref={pageRef}
             selection={selection}
+            simState={simState}
             onSelectionChanged={(selection) => {
               setSelection(selection)
             }}
@@ -273,7 +312,7 @@ function App () {
               setCircuit(clone)
             }}
             onWireAdded={addWire}
-            editable
+            editable={!simState}
           />
         </Container>
       </main>

@@ -242,6 +242,7 @@ const Page = React.forwardRef((props, ref) => {
               theme={props.theme}
               selection={totalSelection}
               editable={isEditable}
+              simState={props.simState}
               onClick={(e) => {
                 if (isEditable) {
                   if (!didDrag) {

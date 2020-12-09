@@ -7,6 +7,7 @@ import Wire from './Wire'
 const useStyles = makeStyles((theme) => ({
   selectedGate: {
     position: 'absolute',
+    margin: '-1px',
     left: 0,
     top: 0,
     border: `1px solid ${theme.palette.primary.main}`,
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: 0,
     top: 0,
+    margin: '-1px',
     border: '1px solid #ffffff00',
     borderRadius: '4px',
     cursor: 'pointer',
@@ -78,7 +80,7 @@ function LogicGate (props) {
   const Pin = (pinProps) => (
     <img
       alt=''
-      src={theme.getPinSvg(pinProps.pin)}
+      src={theme.getPinSvg(pinProps.pin, props.simState)}
       onMouseDown={
         (e) => props.onPinMouseDown(e, pinProps.pin.id, pinProps.isOutput)
       }
@@ -135,7 +137,7 @@ function LogicGate (props) {
       {/* The gate itself */}
       <img
         alt={props.gate.type}
-        src={theme.getGateSvg(props.gate)}
+        src={theme.getGateSvg(props.gate, props.simState)}
         style={{ position: 'absolute' }}
         onClick={props.onClick}
         onMouseDown={props.onMouseDown}

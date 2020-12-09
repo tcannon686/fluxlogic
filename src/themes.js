@@ -3,6 +3,8 @@
  * as well as the position of the pins.
  */
 
+import logic from './logic'
+
 /* SVGs */
 import AndGateSvg from './assets/and-gate.svg'
 import OrGateSvg from './assets/or-gate.svg'
@@ -14,17 +16,22 @@ import BufferGateSvg from './assets/buffer-gate.svg'
 import OneGateSvg from './assets/one-gate.svg'
 import ZeroGateSvg from './assets/zero-gate.svg'
 import LedSvg from './assets/led.svg'
+import LedGlowSvg from './assets/led-glow.svg'
 
 const defaultThemeSvgs = {
-  and: AndGateSvg,
-  or: OrGateSvg,
-  buffer: BufferGateSvg,
-  led: LedSvg
+  and: () => AndGateSvg,
+  or: () => OrGateSvg,
+  buffer: () => BufferGateSvg,
+  led: (gate, state) =>
+    state
+      ? (logic.getInputs(gate, state)[0] ? LedGlowSvg : LedSvg)
+      : (LedSvg),
+  constant: (gate) => gate.value ? OneGateSvg : ZeroGateSvg
 }
 
 const defaultTheme = {
   /* Returns an SVG for the given pin. */
-  getPinSvg: (pin) => (
+  getPinSvg: (pin, state) => (
     pin.connections.length === 0
       ? (pin.isInverted
         ? OpenPinInvertedSvg
@@ -34,16 +41,12 @@ const defaultTheme = {
         : PinSvg)),
 
   /* Returns an SVG for the given gate. */
-  getGateSvg (gate) {
-    if (defaultThemeSvgs[gate.type]) {
-      return defaultThemeSvgs[gate.type]
-    } else if (gate.type === 'constant') {
-      return gate.value ? OneGateSvg : ZeroGateSvg
-    }
+  getGateSvg (gate, state) {
+    return defaultThemeSvgs[gate.type](gate, state)
   },
 
   /* Returns an object mapping a pin ID to a pin position. */
-  getPinPositions (gate, x, y) {
+  getPinPositions (gate, x, y, state) {
     /* Maps a pin ID to a position */
     const ret = {}
 
@@ -64,11 +67,11 @@ const defaultTheme = {
     return ret
   },
 
-  getWidth (gate) {
+  getWidth (gate, state) {
     return 0.5
   },
 
-  getHeight (gate) {
+  getHeight (gate, state) {
     return 0.5
   }
 }
