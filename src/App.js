@@ -273,6 +273,7 @@ function App () {
               setCircuit(clone)
             }}
             onWireAdded={addWire}
+            editable
           />
         </Container>
       </main>

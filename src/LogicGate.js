@@ -18,6 +18,18 @@ const useStyles = makeStyles((theme) => ({
   gate: {
     position: 'absolute',
     left: 0,
+    top: 0
+  },
+
+  pin: {
+    position: 'absolute',
+    left: 0,
+    top: 0
+  },
+
+  editableGate: {
+    position: 'absolute',
+    left: 0,
     top: 0,
     border: '1px solid #ffffff00',
     borderRadius: '4px',
@@ -27,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
 
-  pin: {
+  editablePin: {
     position: 'absolute',
     margin: 0,
     borderRadius: '4px',
@@ -77,7 +89,7 @@ function LogicGate (props) {
         left: `${pinPositions[pinProps.pin.id].x - x - 0.0625}in`,
         top: `${pinPositions[pinProps.pin.id].y - y - 0.0625}in`
       }}
-      className={classes.pin}
+      className={props.editable ? classes.editablePin : classes.pin}
     />
   )
 
@@ -89,7 +101,11 @@ function LogicGate (props) {
         width: `${width}in`,
         height: `${height}in`
       }}
-      className={isSelected ? classes.selectedGate : classes.gate}
+      className={
+        isSelected
+          ? classes.selectedGate
+          : (props.editable ? classes.editableGate : classes.gate)
+      }
     >
 
       {
