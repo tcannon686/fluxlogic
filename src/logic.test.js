@@ -290,3 +290,45 @@ test('can serialize circuit', () => {
   const json = JSON.stringify(circuit)
   expect(json.length).toBeGreaterThan(10)
 })
+
+test('renumbers circuit', () => {
+  const gates = [
+    logic.constantGate(false),
+    logic.constantGate(true),
+    logic.buffer(),
+    logic.andGate(),
+    logic.orGate(),
+    logic.led()
+  ]
+
+  const circuit = logic.circuit(gates)
+
+  const json = JSON.stringify(circuit)
+  const circuit2 = logic.renumber(JSON.parse(json))
+
+  /* Verify that the IDs for the circuits are different. */
+  const usedIds = {}
+  circuit.gates.forEach((gate) => {
+    usedIds[gate.id] = true
+    gate.inputs.forEach((pin) => { usedIds[pin.id] = true })
+    gate.outputs.forEach((pin) => { usedIds[pin.id] = true })
+  })
+
+  circuit2.gates.forEach((gate) => {
+    expect(usedIds[gate.id]).toBeUndefined()
+    gate.inputs.forEach((pin) => { expect(usedIds[pin.id]).toBeUndefined() })
+    gate.outputs.forEach((pin) => { expect(usedIds[pin.id]).toBeUndefined() })
+  })
+
+  /* Verify that all pins have valid outputs. */
+  const validPins = {}
+  circuit2.gates.forEach((gate) => {
+    gate.inputs.forEach((pin) => { validPins[pin.id] = true })
+    gate.outputs.forEach((pin) => { validPins[pin.id] = true })
+  })
+
+  circuit2.gates.forEach((gate) => {
+    gate.inputs.forEach((pin) => { expect(validPins[pin.id]).toBeTruthy() })
+    gate.outputs.forEach((pin) => { expect(validPins[pin.id]).toBeTruthy() })
+  })
+})

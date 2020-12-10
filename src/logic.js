@@ -1,3 +1,4 @@
+import packageJson from '../package.json'
 
 /*
  * An object mapping gate types to functions.
@@ -21,6 +22,7 @@ function connect (a, b) {
  */
 function circuit (gates) {
   return {
+    version: packageJson.version,
     gates
   }
 }
@@ -163,12 +165,43 @@ function nextId () {
   return currentId++
 }
 
+/*
+ * This function renumbers the IDs of the given circuit so that there are no
+ * collisions. This should be called any time a circuit is loaded to avoid
+ * collisions. It returns the circuit.
+ */
+function renumber (circuit) {
+  let maxId = currentId
+
+  const updateId = (object) => {
+    object.id += currentId
+    if (object.id > maxId) {
+      maxId = object.id
+    }
+
+    if (object.connections) {
+      object.connections = object.connections.map((id) => id + currentId)
+    }
+  }
+
+  circuit.gates.forEach((gate) => {
+    updateId(gate)
+    gate.inputs.forEach(updateId)
+    gate.outputs.forEach(updateId)
+  })
+
+  currentId = maxId + 1
+
+  return circuit
+}
+
 export default {
   connect,
   nextState,
   getOutputs,
   getInputs,
   fastForward,
+  renumber,
   circuit,
   andGate,
   orGate,

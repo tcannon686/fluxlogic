@@ -10,6 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Container from '@material-ui/core/Container'
 import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
+import Snackbar from '@material-ui/core/Snackbar'
 
 /* Icons. */
 import StopIcon from '@material-ui/icons/Stop'
@@ -19,6 +20,8 @@ import RedoIcon from '@material-ui/icons/Redo'
 import UndoIcon from '@material-ui/icons/Undo'
 import PauseIcon from '@material-ui/icons/Pause'
 import HelpIcon from '@material-ui/icons/Help'
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -29,6 +32,8 @@ import Palette from './Palette'
 /* Logic components. */
 import logic from './logic'
 import { defaultTheme } from './themes'
+
+import { upload, download } from './utils'
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import SimWorker from 'workerize-loader!./sim.worker'
@@ -73,6 +78,9 @@ function App () {
   const [simState, setSimState] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const simWorker = useRef(new SimWorker())
+
+  /* For opening and closing the upload error snackbar. */
+  const [openUploadError, setOpenUploadError] = useState(false)
 
   /* Refs used for calculating the center of the page. */
   const appBarRef = React.createRef()
@@ -234,6 +242,32 @@ function App () {
           <Typography variant='h6' className={classes.title}>MML2</Typography>
 
           <ButtonGroup className={classes.menuButtonGroup}>
+            <Tooltip title='Upload project'>
+              <Button
+                aria-label='upload'
+                onClick={
+                  () => upload()
+                    .then((data) => setCircuit(logic.renumber(data)))
+                    .catch((error) => {
+                      setOpenUploadError(true)
+                      console.error(error)
+                    })
+                }
+              >
+                <CloudUploadIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip title='Download project'>
+              <Button
+                aria-label='download'
+                onClick={() => download('circuit.json', circuit)}
+              >
+                <CloudDownloadIcon />
+              </Button>
+            </Tooltip>
+          </ButtonGroup>
+
+          <ButtonGroup className={classes.menuButtonGroup}>
             <Tooltip title='Undo'>
               <Button aria-label='undo'>
                 <UndoIcon />
@@ -316,6 +350,12 @@ function App () {
           />
         </Container>
       </main>
+      <Snackbar
+        open={openUploadError}
+        autoHideDuration={10000}
+        onClose={() => { setOpenUploadError(false) }}
+        message="Uh oh! We weren't able to load that file."
+      />
     </div>
   )
 }
