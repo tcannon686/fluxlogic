@@ -35,6 +35,8 @@ import { defaultTheme } from './themes'
 
 import { upload, download } from './utils'
 
+import { useUndoable } from './hooks'
+
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import SimWorker from 'workerize-loader!./sim.worker'
 
@@ -73,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function App () {
-  const [circuit, setCircuit] = useState(() => logic.circuit([]))
+  const [circuit, setCircuit, undo, redo] = useUndoable(() => logic.circuit([]))
   const [selection, setSelection] = useState(false)
   const [simState, setSimState] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -269,12 +271,12 @@ function App () {
 
           <ButtonGroup className={classes.menuButtonGroup}>
             <Tooltip title='Undo'>
-              <Button aria-label='undo'>
+              <Button aria-label='undo' onClick={undo}>
                 <UndoIcon />
               </Button>
             </Tooltip>
             <Tooltip title='Redo'>
-              <Button aria-label='redo'>
+              <Button aria-label='redo' onClick={redo}>
                 <RedoIcon />
               </Button>
             </Tooltip>
