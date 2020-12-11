@@ -1,5 +1,3 @@
-import packageJson from '../package.json'
-
 /*
  * An object mapping gate types to functions.
  */
@@ -22,7 +20,6 @@ function connect (a, b) {
  */
 function circuit (gates) {
   return {
-    version: packageJson.version,
     gates
   }
 }

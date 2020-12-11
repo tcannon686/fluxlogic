@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
+import packageJson from '../package.json'
+
 /* Material UI components. */
 import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
@@ -249,7 +251,9 @@ function App () {
                 aria-label='upload'
                 onClick={
                   () => upload()
-                    .then((data) => setCircuit(logic.renumber(data)))
+                    .then((data) => {
+                      setCircuit(logic.renumber(data.circuit))
+                    })
                     .catch((error) => {
                       setOpenUploadError(true)
                       console.error(error)
@@ -262,7 +266,12 @@ function App () {
             <Tooltip title='Download project'>
               <Button
                 aria-label='download'
-                onClick={() => download('circuit.json', circuit)}
+                onClick={() => {
+                  download('circuit.json', {
+                    version: packageJson.version,
+                    circuit
+                  })
+                }}
               >
                 <CloudDownloadIcon />
               </Button>
