@@ -1,3 +1,48 @@
+# MML2
+
+Welcome to MML2, a logic circuit editor and simulator developed using React. The
+goal of the project is to create a program similar to [MultiMedia Logic
+(MML)](https://www.softronix.com/logic.html) using more up to date software.
+
+Current development is focused on emulating some of the core functionality of
+MML. A Kanban board with a list of completed and in progress tasks is available
+in the projects page of this repository. We are using [Standard
+JS](https://standardjs.com/) as our coding style, so if you would like to
+contribute please follow this style, or use `yarn lint --fix`.
+
+## Usage
+
+First, you need to start a server for the project somehow. See the Available
+Scripts section below for information on how to do that. Once the project is
+started, you should open it up in your browser.
+
+### Adding logic gates
+
+Once MML2 is open in your browser, you will see the 'Palette', containing a list
+of pictures of logic components, on the left side of the screen. To add a logic
+component to the page, simply click on its icon in the palette. The selected
+logic gate will be added to the center of the page.
+
+### Moving logic gates
+
+You can select the logic gates that you placed by clicking and dragging a box
+around the components you want to select or by clicking on the components
+individually. You can hold the shift key if you want to add to your selection.
+To deselect, click on an empty part of the page.
+
+Once you've made a selection, you can move all of the components in your
+selection by clicking and dragging one of the components.
+
+### Adding wires
+
+Once a logic component is added, you will see red 'pins' for its inputs and
+outputs. The pins are red because they have not been connected to anything. To
+connect two pins, click and drag from the first pin to the second pin. You can
+connect wires even while you have components selected.
+ > Note: you can only connect outputs to inputs, and vice versa
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
