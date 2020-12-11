@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Wire from './Wire'
@@ -47,11 +47,18 @@ function PreviewWire (props) {
 }
 
 const Page = React.forwardRef((props, ref) => {
+  const selection = props.selection
+  const theme = props.theme
+
   const isEditable = props.editable
   const circuit = props.circuit
-  const [selectionStart, setSelectionStart] = useState(null)
+
+  const onSelectionChanged = props.onSelectionChanged
+  const onWireAdded = props.onWireAdded
 
   const classes = useStyles()
+
+  const [selectionStart, setSelectionStart] = useState(null)
 
   /* Object containing IDs of gates currently being selected. */
   const [toBeAddedToSelection, setToBeAddedToSelection] = useState({})
@@ -65,10 +72,16 @@ const Page = React.forwardRef((props, ref) => {
    */
   const [didDrag, setDidDrag] = useState(false)
 
-  /* The amount to move the current selection. */
+  /* The start and end positions of the drag in client coordinates. */
   const [moveStart, setMoveStart] = useState([0, 0])
   const [moveEnd, setMoveEnd] = useState([0, 0])
 
+  const [wireStartPin, setWireStartPin] = useState(null)
+
+  /* Whether or not the pin being dragged from is an output pin. */
+  const [wireStartPinIsOutput, setWireStartPinIsOutput] = useState(false)
+
+  /* The amount to move teh selected components in page coordinates. */
   const moveAmount = isDragging
     ? [
       (moveEnd[0] - moveStart[0]) / 96,
@@ -76,10 +89,20 @@ const Page = React.forwardRef((props, ref) => {
     ]
     : [0, 0]
 
-  const [wireStartPin, setWireStartPin] = useState(null)
+  /* An object that maps each pin to its position. */
+  const pinPositions = useMemo(() => {
+    const positions = {}
 
-  /* Whether or not the pin being dragged from is an output pin. */
-  const [wireStartPinIsOutput, setWireStartPinIsOutput] = useState(false)
+    /* Calculate the pin positions. */
+    circuit.gates.forEach((gate) => {
+      const x = (gate.x || 0) + (selection[gate.id] ? moveAmount[0] : 0)
+      const y = (gate.y || 0) + (selection[gate.id] ? moveAmount[1] : 0)
+
+      Object.assign(positions, theme.getPinPositions(gate, x, y))
+    })
+
+    return positions
+  }, [selection, theme, moveAmount, circuit])
 
   /*
    * Function to convert from client coordianates to coordinates on the page.
@@ -92,19 +115,8 @@ const Page = React.forwardRef((props, ref) => {
     ]
   }
 
-  /* An object that maps each pin to its position. */
-  const pinPositions = {}
-
-  /* calculate the pin positions. */
-  circuit.gates.forEach((gate) => {
-    const x = (gate.x || 0) + (props.selection[gate.id] ? moveAmount[0] : 0)
-    const y = (gate.y || 0) + (props.selection[gate.id] ? moveAmount[1] : 0)
-
-    Object.assign(pinPositions, props.theme.getPinPositions(gate, x, y))
-  })
-
   /* Called when the bounds of the selection box changes. */
-  const onSelectionChanged = (ul, br) => {
+  const onSelectionBoxChanged = (ul, br) => {
     /* Calculate the selection on the page. */
 
     const a = clientToPage(ul)
@@ -139,6 +151,59 @@ const Page = React.forwardRef((props, ref) => {
     }
   }
 
+  const onGateClick = useCallback((e, id) => {
+    if (isEditable) {
+      if (!didDrag) {
+        const newSelection = {}
+        if (e.shiftKey) {
+          Object.assign(newSelection, selection)
+        }
+        newSelection[id] = !newSelection[id]
+        onSelectionChanged(newSelection)
+        e.stopPropagation()
+      }
+    }
+  }, [selection, isEditable, didDrag, onSelectionChanged])
+
+  const onGateMouseDown = useCallback((e, id) => {
+    if (isEditable) {
+      setMoveStart([e.clientX, e.clientY])
+      setMoveEnd([e.clientX, e.clientY])
+      setDidDrag(false)
+      if (selection[id]) {
+        setIsDragging(true)
+      }
+      e.stopPropagation()
+    }
+    e.preventDefault()
+  }, [isEditable, selection, setMoveStart, setMoveEnd, setDidDrag])
+
+  const onPinMouseDown = useCallback((e, id, isOutputPin) => {
+    if (isEditable) {
+      setWireStartPin(id)
+      setWireStartPinIsOutput(isOutputPin)
+      e.stopPropagation()
+    }
+    e.preventDefault()
+  }, [setWireStartPin, setWireStartPinIsOutput, isEditable])
+
+  const onPinMouseUp = useCallback((e, id, isOutputPin) => {
+    if (isEditable) {
+      /*
+       * Add a wire if the wire start pin is different from the wire
+       * end pin, and both of the pins are not output pins
+       */
+      if (wireStartPin !== null &&
+          wireStartPin !== id &&
+          isOutputPin ^ wireStartPinIsOutput) {
+        onWireAdded(wireStartPin, id)
+        e.stopPropagation()
+        e.preventDefault()
+      }
+      setWireStartPin(null)
+    }
+  }, [isEditable, wireStartPin, wireStartPinIsOutput, onWireAdded])
+
   /*
    * The total selection, including elements currently being selected as well as
    * the previously selected elements.
@@ -160,7 +225,7 @@ const Page = React.forwardRef((props, ref) => {
           e.stopPropagation()
         } else if (selectionStart) {
           setToBeAddedToSelection({})
-          props.onSelectionChanged(totalSelection)
+          onSelectionChanged(totalSelection)
         }
         setSelectionStart(null)
 
@@ -203,7 +268,7 @@ const Page = React.forwardRef((props, ref) => {
 
           /* Reset the selection if the user did not click shift. */
           if (!e.shiftKey) {
-            props.onSelectionChanged({})
+            onSelectionChanged({})
           }
         }
 
@@ -240,58 +305,13 @@ const Page = React.forwardRef((props, ref) => {
               y={y}
               key={gate.id}
               theme={props.theme}
-              selection={totalSelection}
+              selected={totalSelection[gate.id]}
               editable={isEditable}
               simState={props.simState}
-              onClick={(e) => {
-                if (isEditable) {
-                  if (!didDrag) {
-                    const newSelection = {}
-                    if (e.shiftKey) {
-                      Object.assign(newSelection, props.selection)
-                    }
-                    newSelection[gate.id] = !newSelection[gate.id]
-                    props.onSelectionChanged(newSelection)
-                    e.stopPropagation()
-                  }
-                }
-              }}
-              onMouseDown={(e) => {
-                if (isEditable) {
-                  setMoveStart([e.clientX, e.clientY])
-                  setMoveEnd([e.clientX, e.clientY])
-                  setDidDrag(false)
-                  if (props.selection[gate.id]) {
-                    setIsDragging(true)
-                  }
-                  e.stopPropagation()
-                }
-                e.preventDefault()
-              }}
-              onPinMouseDown={(e, id, isOutputPin) => {
-                if (isEditable) {
-                  setWireStartPin(id)
-                  setWireStartPinIsOutput(isOutputPin)
-                  e.stopPropagation()
-                }
-                e.preventDefault()
-              }}
-              onPinMouseUp={(e, id, isOutputPin) => {
-                if (isEditable) {
-                  /*
-                   * Add a wire if the wire start pin is different from the wire
-                   * end pin, and both of the pins are not output pins
-                   */
-                  if (wireStartPin !== null &&
-                      wireStartPin !== id &&
-                      isOutputPin ^ wireStartPinIsOutput) {
-                    props.onWireAdded(wireStartPin, id)
-                    e.stopPropagation()
-                    e.preventDefault()
-                  }
-                  setWireStartPin(null)
-                }
-              }}
+              onGateClick={onGateClick}
+              onGateMouseDown={onGateMouseDown}
+              onPinMouseDown={onPinMouseDown}
+              onPinMouseUp={onPinMouseUp}
             />
           )
         })
@@ -301,10 +321,11 @@ const Page = React.forwardRef((props, ref) => {
         isEditable && selectionStart && (
           <SelectionBox
             selectionStart={selectionStart}
-            onSelectionChanged={onSelectionChanged}
+            onSelectionChanged={onSelectionBoxChanged}
           />
         )
       }
+
       {
         isEditable && wireStartPin !== null && (
           <PreviewWire

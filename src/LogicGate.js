@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 /*
  * A react component representing a single logic gate.
  */
-function LogicGate (props) {
+const LogicGate = React.memo((props) => {
   /*
    * The object responsible for placing the pins and choosing the SVGs. Note
    * that this is not related to the material-ui theme.
@@ -75,7 +75,7 @@ function LogicGate (props) {
   /* The positions of the pins. */
   const pinPositions = theme.getPinPositions(props.gate, x, y)
 
-  const isSelected = props.selection[props.gate.id]
+  const isSelected = props.selected
 
   const Pin = (pinProps) => (
     <img
@@ -139,8 +139,8 @@ function LogicGate (props) {
         alt={props.gate.type}
         src={theme.getGateSvg(props.gate, props.simState)}
         style={{ position: 'absolute' }}
-        onClick={props.onClick}
-        onMouseDown={props.onMouseDown}
+        onClick={(e) => props.onGateClick(e, props.gate.id)}
+        onMouseDown={(e) => props.onGateMouseDown(e, props.gate.id)}
       />
 
       {
@@ -158,6 +158,6 @@ function LogicGate (props) {
       }
     </div>
   )
-}
+})
 
 export default LogicGate
