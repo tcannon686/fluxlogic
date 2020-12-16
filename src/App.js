@@ -245,7 +245,10 @@ function App () {
 
           <Typography variant='h6' className={classes.title}>MML2</Typography>
 
-          <ButtonGroup className={classes.menuButtonGroup}>
+          <ButtonGroup
+            className={classes.menuButtonGroup}
+            color='inherit'
+          >
             <Tooltip title='Upload project'>
               <Button
                 aria-label='upload'
@@ -278,7 +281,10 @@ function App () {
             </Tooltip>
           </ButtonGroup>
 
-          <ButtonGroup className={classes.menuButtonGroup}>
+          <ButtonGroup
+            className={classes.menuButtonGroup}
+            color='inherit'
+          >
             <Tooltip title='Undo'>
               <Button aria-label='undo' onClick={undo}>
                 <UndoIcon />
@@ -291,7 +297,10 @@ function App () {
             </Tooltip>
           </ButtonGroup>
 
-          <ButtonGroup className={classes.menuButtonGroup}>
+          <ButtonGroup
+            className={classes.menuButtonGroup}
+            color='inherit'
+          >
             <Tooltip title={isPlaying ? 'Stop simulation' : 'Start simulation'}>
               <Button
                 aria-label={isPlaying ? 'stop' : 'start'}
@@ -314,6 +323,7 @@ function App () {
               aria-label='delete'
               onClick={deleteSelection}
               className={classes.menuButton}
+              color='inherit'
             >
               <DeleteIcon />
             </Button>
@@ -323,6 +333,7 @@ function App () {
             <Button
               aria-label='help'
               className={classes.menuButton}
+              color='inherit'
             >
               <HelpIcon />
             </Button>
