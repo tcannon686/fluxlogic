@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Wire from './Wire'
-import LogicGate from './LogicGate'
+import Circuit from './Circuit'
 import SelectionBox from './SelectionBox'
 
 const useStyles = makeStyles((theme) => ({
@@ -88,21 +88,6 @@ const Page = React.forwardRef((props, ref) => {
       (moveEnd[1] - moveStart[1]) / 96
     ]
     : [0, 0]
-
-  /* An object that maps each pin to its position. */
-  const pinPositions = useMemo(() => {
-    const positions = {}
-
-    /* Calculate the pin positions. */
-    circuit.gates.forEach((gate) => {
-      const x = (gate.x || 0) + (selection[gate.id] ? moveAmount[0] : 0)
-      const y = (gate.y || 0) + (selection[gate.id] ? moveAmount[1] : 0)
-
-      Object.assign(positions, theme.getPinPositions(gate, x, y))
-    })
-
-    return positions
-  }, [selection, theme, moveAmount, circuit])
 
   /*
    * Function to convert from client coordianates to coordinates on the page.
@@ -210,6 +195,21 @@ const Page = React.forwardRef((props, ref) => {
    */
   const totalSelection = { ...props.selection, ...toBeAddedToSelection }
 
+  /* An object that maps each pin to its position. */
+  const pinPositions = useMemo(() => {
+    const positions = {}
+
+    /* Calculate the pin positions. */
+    circuit.gates.forEach((gate) => {
+      const x = (gate.x || 0) + (selection[gate.id] ? moveAmount[0] : 0)
+      const y = (gate.y || 0) + (selection[gate.id] ? moveAmount[1] : 0)
+
+      Object.assign(positions, theme.getPinPositions(gate, x, y))
+    })
+
+    return positions
+  }, [selection, theme, moveAmount, circuit])
+
   /*
    * Add a mouseup event listener to the window. We need to do this in case the
    * user drags outside the window.
@@ -275,48 +275,18 @@ const Page = React.forwardRef((props, ref) => {
         e.preventDefault()
       }}
     >
-      {
-        /* Wires */
-        circuit.gates.map(
-          (gate) => gate.inputs
-            .filter((pin) => pin.connections[0])
-            .map((pin) =>
-              <Wire
-                key={`${pin.id}-${pin.connections[0].id}`}
-                x0={pinPositions[pin.connections[0]].x}
-                y0={pinPositions[pin.connections[0]].y}
-                x1={pinPositions[pin.id].x}
-                y1={pinPositions[pin.id].y}
-              />))
-      }
-
-      {
-        /* Gates */
-        circuit.gates.map((gate) => {
-          const x = (gate.x || 0) +
-            (props.selection[gate.id] ? moveAmount[0] : 0)
-          const y = (gate.y || 0) +
-            (props.selection[gate.id] ? moveAmount[1] : 0)
-
-          return (
-            <LogicGate
-              gate={gate}
-              x={x}
-              y={y}
-              key={gate.id}
-              theme={props.theme}
-              selected={totalSelection[gate.id]}
-              editable={isEditable}
-              simState={props.simState}
-              onGateClick={onGateClick}
-              onGateMouseDown={onGateMouseDown}
-              onPinMouseDown={onPinMouseDown}
-              onPinMouseUp={onPinMouseUp}
-            />
-          )
-        })
-      }
-
+      <Circuit
+        circuit={circuit}
+        editable={isEditable}
+        selection={totalSelection}
+        theme={theme}
+        moveAmount={moveAmount}
+        onPinMouseDown={onPinMouseDown}
+        onPinMouseUp={onPinMouseUp}
+        onGateClick={onGateClick}
+        onGateMouseDown={onGateMouseDown}
+        simState={props.simState}
+      />
       {
         isEditable && selectionStart && (
           <SelectionBox
