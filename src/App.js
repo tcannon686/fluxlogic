@@ -157,14 +157,15 @@ function App () {
      * Function that takes in a pin, clones it and adds a connection if it is
      * the from or to pin. Returns the pin otherwise.
      */
-    const updatePin = (pin) => {
-      if (pin.id === from && pin.connections.length === 0) {
-        return { ...pin, connections: [to] }
-      } else if (pin.id === to && pin.connections.length === 0) {
-        return { ...pin, connections: [from] }
-      } else {
-        return pin
+    const updatePin = (pin, isOutputPin) => {
+      if (isOutputPin || pin.connections.length === 0) {
+        if (pin.id === from) {
+          return { ...pin, connections: [...pin.connections, to] }
+        } else if (pin.id === to) {
+          return { ...pin, connections: [...pin.connections, from] }
+        }
       }
+      return pin
     }
 
     /* Only update if the input pin has no connections. */
@@ -174,7 +175,9 @@ function App () {
       let hasPin = false
       const inputs = gate.inputs.map((pin) => {
         const r = updatePin(pin)
-        if (r !== pin) { hasPin = true }
+        if (r !== pin) {
+          hasPin = true
+        }
         return r
       })
 
@@ -192,8 +195,10 @@ function App () {
       clone.gates = clone.gates.map((gate) => {
         let hasPin = false
         const outputs = gate.outputs.map((pin) => {
-          const r = updatePin(pin)
-          if (r !== pin) { hasPin = true }
+          const r = updatePin(pin, true)
+          if (r !== pin) {
+            hasPin = true
+          }
           return r
         })
 
