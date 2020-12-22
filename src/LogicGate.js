@@ -70,7 +70,7 @@ const LogicGate = React.memo((props) => {
   const y = props.y
 
   const width = theme.getWidth(props.gate)
-  const height = theme.getWidth(props.gate)
+  const height = theme.getHeight(props.gate)
 
   /* The positions of the pins. */
   const pinPositions = theme.getPinPositions(props.gate, x, y)
