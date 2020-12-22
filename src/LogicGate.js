@@ -80,7 +80,7 @@ const LogicGate = React.memo((props) => {
   const Pin = (pinProps) => (
     <img
       alt=''
-      src={theme.getPinSvg(pinProps.pin, props.simState)}
+      src={theme.getPinSvg(pinProps.pin)}
       onMouseDown={
         (e) => props.onPinMouseDown(e, pinProps.pin.id, pinProps.isOutput)
       }
@@ -137,7 +137,7 @@ const LogicGate = React.memo((props) => {
       {/* The gate itself */}
       <img
         alt={props.gate.type}
-        src={theme.getGateSvg(props.gate, props.simState)}
+        src={props.svg}
         style={{ position: 'absolute' }}
         onClick={(e) => props.onGateClick(e, props.gate.id)}
         onMouseDown={(e) => props.onGateMouseDown(e, props.gate.id)}

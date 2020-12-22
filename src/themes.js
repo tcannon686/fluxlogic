@@ -31,7 +31,7 @@ const defaultThemeSvgs = {
 
 const defaultTheme = {
   /* Returns an SVG for the given pin. */
-  getPinSvg: (pin, state) => (
+  getPinSvg: (pin) => (
     pin.connections.length === 0
       ? (pin.isInverted
         ? OpenPinInvertedSvg

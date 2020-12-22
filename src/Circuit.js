@@ -67,13 +67,13 @@ export default function Circuit (props) {
           return (
             <LogicGate
               gate={gate}
+              svg={theme.getGateSvg(gate, simState)}
               x={x}
               y={y}
               key={gate.id}
               theme={theme}
               selected={selection[gate.id]}
               editable={isEditable}
-              simState={simState}
               onGateClick={onGateClick}
               onGateMouseDown={onGateMouseDown}
               onPinMouseDown={onPinMouseDown}
