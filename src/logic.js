@@ -2,11 +2,11 @@
  * An object mapping gate types to functions.
  */
 const nextOutputFunctions = {
-  and: (gate, inputs) => [inputs.every((x) => x)],
-  or: (gate, inputs) => [inputs.some((x) => x)],
-  constant: (gate, inputs) => [gate.value],
-  led: (gate, inputs) => [],
-  buffer: (gate, inputs) => inputs
+  and: (gate, state) => [getInputs(gate, state).every((x) => x)],
+  or: (gate, state) => [getInputs(gate, state).some((x) => x)],
+  constant: (gate, state) => [gate.value],
+  led: (gate, state) => [],
+  buffer: (gate, state) => getInputs(gate, state)
 }
 
 /** Connect to logic pins by a wire. */
@@ -103,11 +103,8 @@ function nextState (circuit, prevState) {
 
   if (prevState) {
     for (const gate of circuit.gates) {
-      /* Find the inputs to the gate. */
-      const inputs = getInputs(gate, prevState)
-
       /* Calculate the next output. */
-      const nextOutputs = nextOutputFunctions[gate.type](gate, inputs)
+      const nextOutputs = nextOutputFunctions[gate.type](gate, prevState)
 
       for (let i = 0; i < nextOutputs.length; i++) {
         state.outputs[gate.outputs[i].id] = (
