@@ -332,3 +332,22 @@ test('renumbers circuit', () => {
     gate.outputs.forEach((pin) => { expect(validPins[pin.id]).toBeTruthy() })
   })
 })
+
+test('simulates switch', () => {
+  const gates = [
+    logic.switchGate(),
+    logic.led()
+  ]
+
+  logic.connect(gates[0].outputs[0], gates[1].inputs[0])
+
+  const circuit = logic.circuit(gates)
+  let state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[0], state)).toEqual([false])
+  expect(logic.getInputs(gates[1], state)).toEqual([false])
+
+  logic.setUserInput(gates[0], state, true)
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[0], state)).toEqual([true])
+  expect(logic.getInputs(gates[1], state)).toEqual([true])
+})

@@ -6,7 +6,8 @@ const nextOutputFunctions = {
   or: (gate, state) => [getInputs(gate, state).some((x) => x)],
   constant: (gate, state) => [gate.value],
   led: (gate, state) => [],
-  buffer: (gate, state) => getInputs(gate, state)
+  buffer: (gate, state) => getInputs(gate, state),
+  switch: (gate, state) => [Boolean(getUserInput(gate, state))]
 }
 
 /** Connect to logic pins by a wire. */
@@ -65,6 +66,16 @@ function constantGate (value) {
   }
 }
 
+/** Creates a switch gate that the user can interact with. */
+function switchGate () {
+  return {
+    id: nextId(),
+    type: 'switch',
+    inputs: Object.seal([]),
+    outputs: Object.seal([pin()])
+  }
+}
+
 /** Creates an LED. */
 function led () {
   return {
@@ -97,9 +108,13 @@ function buffer () {
  *
  * To calculate the inputs and outputs of individual gates, the getInputs and
  * getOutputs helper functions can be used.
+ *
+ * The input from the user (for example, whether a switch is switched or not) is
+ * stored in the inputs field, that maps a gate ID to a user input object. The
+ * format of the input depends on the gate itself.
  */
 function nextState (circuit, prevState) {
-  const state = { outputs: {} }
+  const state = { outputs: {}, inputs: {} }
 
   if (prevState) {
     for (const gate of circuit.gates) {
@@ -111,6 +126,8 @@ function nextState (circuit, prevState) {
           nextOutputs[i] ^ gate.outputs[i].isInverted) === 1
       }
     }
+
+    Object.assign(state.inputs, prevState.inputs)
   } else {
     /* Initialize all outputs to false. */
     for (const gate of circuit.gates) {
@@ -138,6 +155,20 @@ function getInputs (gate, state) {
  */
 function getOutputs (gate, state) {
   return gate.outputs.map((pin) => state.outputs[pin.id])
+}
+
+/**
+ * Returns the user input for the gate given the current simulation state.
+ */
+function getUserInput (gate, state) {
+  return state.inputs[gate.id]
+}
+
+/**
+ * Sets the user input for the gate for the current simulation state.
+ */
+function setUserInput (gate, state, value) {
+  state.inputs[gate.id] = value
 }
 
 /**
@@ -194,12 +225,15 @@ export default {
   nextState,
   getOutputs,
   getInputs,
+  getUserInput,
+  setUserInput,
   fastForward,
   renumber,
   circuit,
   andGate,
   orGate,
   constantGate,
+  switchGate,
   led,
   buffer
 }
