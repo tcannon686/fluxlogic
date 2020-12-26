@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import logic from './logic'
 
 import Wire from './Wire'
 import Circuit from './Circuit'
@@ -50,11 +51,14 @@ const Page = React.forwardRef((props, ref) => {
   const selection = props.selection
   const theme = props.theme
 
+  const simState = props.simState
+
   const isEditable = props.editable
   const circuit = props.circuit
 
   const onSelectionChanged = props.onSelectionChanged
   const onWireAdded = props.onWireAdded
+  const onUserInputChanged = props.onUserInputChanged
 
   const classes = useStyles()
 
@@ -136,26 +140,37 @@ const Page = React.forwardRef((props, ref) => {
     }
   }
 
-  const onGateClick = useCallback((e, id) => {
+  const onGateClick = useCallback((e, gate) => {
     if (isEditable) {
       if (!didDrag) {
         const newSelection = {}
         if (e.shiftKey) {
           Object.assign(newSelection, selection)
         }
-        newSelection[id] = !newSelection[id]
+        newSelection[gate.id] = !newSelection[gate.id]
         onSelectionChanged(newSelection)
         e.stopPropagation()
       }
+    } else if (simState != null) {
+      if (gate.type === 'switch') {
+        onUserInputChanged(gate, !logic.getUserInput(gate, simState))
+      }
     }
-  }, [selection, isEditable, didDrag, onSelectionChanged])
+  }, [
+    selection,
+    isEditable,
+    didDrag,
+    onSelectionChanged,
+    onUserInputChanged,
+    simState
+  ])
 
-  const onGateMouseDown = useCallback((e, id) => {
+  const onGateMouseDown = useCallback((e, gate) => {
     if (isEditable) {
       setMoveStart([e.clientX, e.clientY])
       setMoveEnd([e.clientX, e.clientY])
       setDidDrag(false)
-      if (selection[id]) {
+      if (selection[gate.id]) {
         setIsDragging(true)
       }
       e.stopPropagation()
@@ -285,7 +300,7 @@ const Page = React.forwardRef((props, ref) => {
         onPinMouseUp={onPinMouseUp}
         onGateClick={onGateClick}
         onGateMouseDown={onGateMouseDown}
-        simState={props.simState}
+        simState={simState}
       />
       {
         isEditable && selectionStart && (

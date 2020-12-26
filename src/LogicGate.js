@@ -139,8 +139,8 @@ const LogicGate = React.memo((props) => {
         alt={props.gate.type}
         src={props.svg}
         style={{ position: 'absolute' }}
-        onClick={(e) => props.onGateClick(e, props.gate.id)}
-        onMouseDown={(e) => props.onGateMouseDown(e, props.gate.id)}
+        onClick={(e) => props.onGateClick(e, props.gate)}
+        onMouseDown={(e) => props.onGateMouseDown(e, props.gate)}
       />
 
       {

@@ -17,6 +17,8 @@ import OneGateSvg from './assets/one-gate.svg'
 import ZeroGateSvg from './assets/zero-gate.svg'
 import LedSvg from './assets/led.svg'
 import LedGlowSvg from './assets/led-glow.svg'
+import SwitchOffSvg from './assets/switch-off.svg'
+import SwitchOnSvg from './assets/switch-on.svg'
 
 const defaultThemeSvgs = {
   and: () => AndGateSvg,
@@ -25,8 +27,12 @@ const defaultThemeSvgs = {
   led: (gate, state) =>
     state
       ? (logic.getInputs(gate, state)[0] ? LedGlowSvg : LedSvg)
-      : (LedSvg),
-  constant: (gate) => gate.value ? OneGateSvg : ZeroGateSvg
+      : LedSvg,
+  constant: (gate) => gate.value ? OneGateSvg : ZeroGateSvg,
+  switch: (gate, state) =>
+    state
+      ? (logic.getUserInput(gate, state) ? SwitchOnSvg : SwitchOffSvg)
+      : SwitchOffSvg
 }
 
 const defaultTheme = {

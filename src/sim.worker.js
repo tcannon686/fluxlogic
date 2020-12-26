@@ -26,3 +26,7 @@ export function stopSimulation () {
   callback = null
   handle = null
 }
+
+export function setUserInput (gate, value) {
+  logic.setUserInput(gate, state, value)
+}

@@ -373,6 +373,9 @@ function App () {
               setCircuit(clone)
             }}
             onWireAdded={addWire}
+            onUserInputChanged={(gate, value) => {
+              simWorker.current.setUserInput(gate, value)
+            }}
             editable={!simState}
           />
         </Container>
