@@ -20,7 +20,6 @@ import PlayIcon from '@material-ui/icons/PlayArrow'
 import DeleteIcon from '@material-ui/icons/Delete'
 import RedoIcon from '@material-ui/icons/Redo'
 import UndoIcon from '@material-ui/icons/Undo'
-import PauseIcon from '@material-ui/icons/Pause'
 import HelpIcon from '@material-ui/icons/Help'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
@@ -238,26 +237,18 @@ function App () {
             </Tooltip>
           </ButtonGroup>
 
-          <ButtonGroup
-            className={classes.menuButtonGroup}
-            color='inherit'
-          >
-            <Tooltip title={isPlaying ? 'Stop simulation' : 'Start simulation'}>
-              <Button
-                aria-label={isPlaying ? 'stop' : 'start'}
-                onClick={onPlayButtonClicked}
-              >
-                {
-                  isPlaying ? <StopIcon /> : <PlayIcon />
-                }
-              </Button>
-            </Tooltip>
-            <Tooltip title='Pause simulation'>
-              <Button aria-label='pause'>
-                <PauseIcon />
-              </Button>
-            </Tooltip>
-          </ButtonGroup>
+          <Tooltip title={isPlaying ? 'Stop simulation' : 'Start simulation'}>
+            <Button
+              aria-label={isPlaying ? 'stop' : 'start'}
+              onClick={onPlayButtonClicked}
+              className={classes.menuButton}
+              color='inherit'
+            >
+              {
+                isPlaying ? <StopIcon /> : <PlayIcon />
+              }
+            </Button>
+          </Tooltip>
 
           <Tooltip title='Delete selection'>
             <Button
