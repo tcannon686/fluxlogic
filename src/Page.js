@@ -257,25 +257,84 @@ const Page = React.forwardRef((props, ref) => {
     }
   }, [circuit, onCircuitChanged])
 
-  const onPinMouseDown = useCallback((e, id, isOutputPin) => {
+  const onPinMouseDown = useCallback((e, pin, isOutputPin) => {
     if (isEditable) {
-      setWireStartPin(id)
-      setWireStartPinIsOutput(isOutputPin)
-      e.stopPropagation()
-    }
-    e.preventDefault()
-  }, [setWireStartPin, setWireStartPinIsOutput, isEditable])
+      /* If the pin is an output pin, start dragging a wire from it. */
+      if (isOutputPin) {
+        setWireStartPin(pin.id)
+        setWireStartPinIsOutput(isOutputPin)
+      } else {
+        /*
+         * If the pin is an input pin and already has a connection, remove the
+         * connection and start dragging from the connected pin.
+         */
+        if (pin.connections.length > 0) {
+          const clone = { ...circuit }
+          clone.gates = clone.gates.map((gate) => {
+            const inIndex = gate.inputs.indexOf(pin)
+            const outIndex = gate.outputs.findIndex(
+              (output) => output.id === pin.connections[0])
 
-  const onPinMouseUp = useCallback((e, id, isOutputPin) => {
+            if (inIndex !== -1) {
+              const gateClone = {
+                ...gate,
+                inputs: [...gate.inputs]
+              }
+
+              /* Remove the connection. */
+              gateClone.inputs[inIndex] = { ...pin, connections: [] }
+
+              return gateClone
+            } else if (outIndex !== -1) {
+              const output = gate.outputs[outIndex]
+              const gateClone = {
+                ...gate,
+                outputs: [...gate.outputs]
+              }
+
+              /* Remove the connection. */
+              gateClone.outputs[outIndex] = {
+                ...output,
+                connections: output.connections.filter((id) => id !== pin.id)
+              }
+
+              return gateClone
+            } else {
+              return gate
+            }
+          })
+
+          /* Update the circuit */
+          onCircuitChanged(clone)
+
+          setWireStartPin(pin.connections[0])
+          setWireStartPinIsOutput(true)
+        } else {
+          setWireStartPin(pin.id)
+          setWireStartPinIsOutput(isOutputPin)
+        }
+      }
+    }
+    e.stopPropagation()
+    e.preventDefault()
+  }, [
+    circuit,
+    isEditable,
+    setWireStartPin,
+    setWireStartPinIsOutput,
+    onCircuitChanged
+  ])
+
+  const onPinMouseUp = useCallback((e, pin, isOutputPin) => {
     if (isEditable) {
       /*
        * Add a wire if the wire start pin is different from the wire
        * end pin, and both of the pins are not output pins
        */
       if (wireStartPin !== null &&
-          wireStartPin !== id &&
+          wireStartPin !== pin.id &&
           isOutputPin ^ wireStartPinIsOutput) {
-        addWire(wireStartPin, id)
+        addWire(wireStartPin, pin.id)
         e.stopPropagation()
         e.preventDefault()
       }

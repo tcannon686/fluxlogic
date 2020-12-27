@@ -82,10 +82,10 @@ const LogicGate = React.memo((props) => {
       alt=''
       src={theme.getPinSvg(pinProps.pin)}
       onMouseDown={
-        (e) => props.onPinMouseDown(e, pinProps.pin.id, pinProps.isOutput)
+        (e) => props.onPinMouseDown(e, pinProps.pin, pinProps.isOutput)
       }
       onMouseUp={
-        (e) => props.onPinMouseUp(e, pinProps.pin.id, pinProps.isOutput)
+        (e) => props.onPinMouseUp(e, pinProps.pin, pinProps.isOutput)
       }
       style={{
         left: `${pinPositions[pinProps.pin.id].x - x - 0.0625}in`,
