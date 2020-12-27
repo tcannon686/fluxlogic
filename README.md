@@ -23,15 +23,19 @@ of pictures of logic components, on the left side of the screen. To add a logic
 component to the page, simply click on its icon in the palette. The selected
 logic gate will be added to the center of the page.
 
-### Moving logic gates
+### Moving and deleting logic gates
 
 You can select the logic gates that you placed by clicking and dragging a box
 around the components you want to select or by clicking on the components
 individually. You can hold the shift key if you want to add to your selection.
-To deselect, click on an empty part of the page.
+To deselect, click on an empty part of the page. When clicking and dragging, the
+whole logic gate must be in the selection, otherwise it will not be selected.
 
 Once you've made a selection, you can move all of the components in your
-selection by clicking and dragging one of the components.
+selection by clicking and dragging one of the selected logic gates. In addition,
+you can delete your selection by clicking the trash can icon in the app bar.
+Remember that you can always undo a deletion by clicking the undo or redo button
+in the app bar!
 
 ### Adding wires
 
@@ -40,6 +44,17 @@ outputs. The pins are red because they have not been connected to anything. To
 connect two pins, click and drag from the first pin to the second pin. You can
 connect wires even while you have components selected.
  > Note: you can only connect outputs to inputs, and vice versa
+
+### Moving and deleting wires
+
+When an input pin has a wire added to it, the wire can be deleted or moved by
+clicking and dragging the pin. To delete a connection, click on an input pin
+that has a wire connected to it, and drag it to an empty space on the page. To
+move a connection, click on an input pin that has a wire connected to it, and
+drag it to an output pin to connect it. Note that when an input pin has no
+connections, clicking and dragging it will add a new connection. In addition,
+clicking and dragging an output pin that already has a connection will add a new
+connection, not delete the current connection.
 
 ---
 
