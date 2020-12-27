@@ -428,6 +428,16 @@ const Page = React.forwardRef((props, ref) => {
         e.preventDefault()
       }}
     >
+      {
+        isEditable && wireStartPin !== null && (
+          <PreviewWire
+            x0={pinPositions[wireStartPin].x}
+            y0={pinPositions[wireStartPin].y}
+            clientToPage={clientToPage}
+            isOutputPin={wireStartPinIsOutput}
+          />
+        )
+      }
       <Circuit
         circuit={circuit}
         editable={isEditable}
@@ -445,17 +455,6 @@ const Page = React.forwardRef((props, ref) => {
           <SelectionBox
             selectionStart={selectionStart}
             onSelectionChanged={onSelectionBoxChanged}
-          />
-        )
-      }
-
-      {
-        isEditable && wireStartPin !== null && (
-          <PreviewWire
-            x0={pinPositions[wireStartPin].x}
-            y0={pinPositions[wireStartPin].y}
-            clientToPage={clientToPage}
-            isOutputPin={wireStartPinIsOutput}
           />
         )
       }
