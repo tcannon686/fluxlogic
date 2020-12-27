@@ -56,8 +56,9 @@ const Page = React.forwardRef((props, ref) => {
   const isEditable = props.editable
   const circuit = props.circuit
 
+  const onCircuitChanged = props.onCircuitChanged
+
   const onSelectionChanged = props.onSelectionChanged
-  const onWireAdded = props.onWireAdded
   const onUserInputChanged = props.onUserInputChanged
 
   const classes = useStyles()
@@ -178,6 +179,84 @@ const Page = React.forwardRef((props, ref) => {
     e.preventDefault()
   }, [isEditable, selection, setMoveStart, setMoveEnd, setDidDrag])
 
+  const onMove = useCallback((moveAmount) => {
+    const clone = { ...circuit }
+    clone.gates = clone.gates.map((gate) => {
+      if (selection[gate.id]) {
+        /* Copy the gate. */
+        gate = { ...gate }
+        gate.x += moveAmount[0]
+        gate.y += moveAmount[1]
+      }
+      return gate
+    })
+    onCircuitChanged(clone)
+  }, [circuit, selection, onCircuitChanged])
+
+  const addWire = useCallback((from, to) => {
+    const clone = { ...circuit }
+
+    /*
+     * Function that takes in a pin, clones it and adds a connection if it is
+     * the from or to pin. Returns the pin otherwise.
+     */
+    const updatePin = (pin, isOutputPin) => {
+      if (isOutputPin || pin.connections.length === 0) {
+        if (pin.id === from) {
+          return { ...pin, connections: [...pin.connections, to] }
+        } else if (pin.id === to) {
+          return { ...pin, connections: [...pin.connections, from] }
+        }
+      }
+      return pin
+    }
+
+    /* Only update if the input pin has no connections. */
+    let shouldUpdate = false
+
+    clone.gates = clone.gates.map((gate) => {
+      let hasPin = false
+      const inputs = gate.inputs.map((pin) => {
+        const r = updatePin(pin)
+        if (r !== pin) {
+          hasPin = true
+        }
+        return r
+      })
+
+      /* If the gate has the pin, clone the gate. */
+      if (hasPin) {
+        shouldUpdate = true
+        return { ...gate, inputs }
+      } else {
+        return gate
+      }
+    })
+
+    if (shouldUpdate) {
+      /* Update output pin. */
+      clone.gates = clone.gates.map((gate) => {
+        let hasPin = false
+        const outputs = gate.outputs.map((pin) => {
+          const r = updatePin(pin, true)
+          if (r !== pin) {
+            hasPin = true
+          }
+          return r
+        })
+
+        /* If the gate has the pin, clone it. */
+        if (hasPin) {
+          return { ...gate, outputs }
+        } else {
+          return gate
+        }
+      })
+
+      onCircuitChanged(clone)
+    }
+  }, [circuit, onCircuitChanged])
+
   const onPinMouseDown = useCallback((e, id, isOutputPin) => {
     if (isEditable) {
       setWireStartPin(id)
@@ -196,13 +275,13 @@ const Page = React.forwardRef((props, ref) => {
       if (wireStartPin !== null &&
           wireStartPin !== id &&
           isOutputPin ^ wireStartPinIsOutput) {
-        onWireAdded(wireStartPin, id)
+        addWire(wireStartPin, id)
         e.stopPropagation()
         e.preventDefault()
       }
       setWireStartPin(null)
     }
-  }, [isEditable, wireStartPin, wireStartPinIsOutput, onWireAdded])
+  }, [isEditable, wireStartPin, wireStartPinIsOutput, addWire])
 
   /*
    * The total selection, including elements currently being selected as well as
@@ -235,7 +314,7 @@ const Page = React.forwardRef((props, ref) => {
         e.preventDefault()
       } else {
         if (isDragging) {
-          props.onMove(moveAmount)
+          onMove(moveAmount)
           setIsDragging(false)
           e.stopPropagation()
         } else if (selectionStart) {

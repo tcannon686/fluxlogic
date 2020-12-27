@@ -150,70 +150,6 @@ function App () {
     setCircuit(clone)
   }
 
-  const addWire = (from, to) => {
-    const clone = { ...circuit }
-
-    /*
-     * Function that takes in a pin, clones it and adds a connection if it is
-     * the from or to pin. Returns the pin otherwise.
-     */
-    const updatePin = (pin, isOutputPin) => {
-      if (isOutputPin || pin.connections.length === 0) {
-        if (pin.id === from) {
-          return { ...pin, connections: [...pin.connections, to] }
-        } else if (pin.id === to) {
-          return { ...pin, connections: [...pin.connections, from] }
-        }
-      }
-      return pin
-    }
-
-    /* Only update if the input pin has no connections. */
-    let shouldUpdate = false
-
-    clone.gates = clone.gates.map((gate) => {
-      let hasPin = false
-      const inputs = gate.inputs.map((pin) => {
-        const r = updatePin(pin)
-        if (r !== pin) {
-          hasPin = true
-        }
-        return r
-      })
-
-      /* If the gate has the pin, clone the gate. */
-      if (hasPin) {
-        shouldUpdate = true
-        return { ...gate, inputs }
-      } else {
-        return gate
-      }
-    })
-
-    if (shouldUpdate) {
-      /* Update output pin. */
-      clone.gates = clone.gates.map((gate) => {
-        let hasPin = false
-        const outputs = gate.outputs.map((pin) => {
-          const r = updatePin(pin, true)
-          if (r !== pin) {
-            hasPin = true
-          }
-          return r
-        })
-
-        /* If the gate has the pin, clone it. */
-        if (hasPin) {
-          return { ...gate, outputs }
-        } else {
-          return gate
-        }
-      })
-
-      setCircuit(clone)
-    }
-  }
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -359,20 +295,9 @@ function App () {
             onSelectionChanged={(selection) => {
               setSelection(selection)
             }}
-            onMove={(moveAmount) => {
-              const clone = { ...circuit }
-              clone.gates = clone.gates.map((gate) => {
-                if (selection[gate.id]) {
-                  /* Copy the gate. */
-                  gate = { ...gate }
-                  gate.x += moveAmount[0]
-                  gate.y += moveAmount[1]
-                }
-                return gate
-              })
-              setCircuit(clone)
+            onCircuitChanged={(circuit) => {
+              setCircuit(circuit)
             }}
-            onWireAdded={addWire}
             onUserInputChanged={(gate, value) => {
               simWorker.current.setUserInput(gate, value)
             }}
