@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "http://localhost:5000/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "http://localhost:5000/static/js/main.20900b60.chunk.js",
+    "main.js.map": "http://localhost:5000/static/js/main.20900b60.chunk.js.map",
+    "runtime-main.js": "http://localhost:5000/static/js/runtime-main.149db709.js",
+    "runtime-main.js.map": "http://localhost:5000/static/js/runtime-main.149db709.js.map",
+    "static/js/2.72ec3739.chunk.js": "http://localhost:5000/static/js/2.72ec3739.chunk.js",
+    "static/js/2.72ec3739.chunk.js.map": "http://localhost:5000/static/js/2.72ec3739.chunk.js.map",
+    "0b06bb78d7d6425039f3.worker.js": "http://localhost:5000/0b06bb78d7d6425039f3.worker.js",
+    "0b06bb78d7d6425039f3.worker.js.map": "http://localhost:5000/0b06bb78d7d6425039f3.worker.js.map",
+    "index.html": "http://localhost:5000/index.html",
+    "precache-manifest.0357cbfbc3bb17a97beb719859878d34.js": "http://localhost:5000/precache-manifest.0357cbfbc3bb17a97beb719859878d34.js",
+    "service-worker.js": "http://localhost:5000/service-worker.js",
+    "static/css/main.5ecd60fb.chunk.css.map": "http://localhost:5000/static/css/main.5ecd60fb.chunk.css.map",
+    "static/js/2.72ec3739.chunk.js.LICENSE.txt": "http://localhost:5000/static/js/2.72ec3739.chunk.js.LICENSE.txt",
+    "static/media/and-gate.svg": "http://localhost:5000/static/media/and-gate.b39df76c.svg",
+    "static/media/buffer-gate.svg": "http://localhost:5000/static/media/buffer-gate.96d07f6a.svg",
+    "static/media/led-glow.svg": "http://localhost:5000/static/media/led-glow.ff1875d8.svg",
+    "static/media/led.svg": "http://localhost:5000/static/media/led.788936c7.svg",
+    "static/media/one-gate.svg": "http://localhost:5000/static/media/one-gate.ac34b99c.svg",
+    "static/media/open-pin-inverted.svg": "http://localhost:5000/static/media/open-pin-inverted.fb8a5ebb.svg",
+    "static/media/open-pin.svg": "http://localhost:5000/static/media/open-pin.402b8aa6.svg",
+    "static/media/or-gate.svg": "http://localhost:5000/static/media/or-gate.ce29e395.svg",
+    "static/media/pin-inverted.svg": "http://localhost:5000/static/media/pin-inverted.25b87449.svg",
+    "static/media/pin.svg": "http://localhost:5000/static/media/pin.4c8eaca6.svg",
+    "static/media/switch-off.svg": "http://localhost:5000/static/media/switch-off.b1ab986c.svg",
+    "static/media/switch-on.svg": "http://localhost:5000/static/media/switch-on.37d11db0.svg",
+    "static/media/zero-gate.svg": "http://localhost:5000/static/media/zero-gate.d126f49d.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.149db709.js",
+    "static/js/2.72ec3739.chunk.js",
+    "static/css/main.5ecd60fb.chunk.css",
+    "static/js/main.20900b60.chunk.js"
+  ]
+}
