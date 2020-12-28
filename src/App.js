@@ -98,6 +98,13 @@ function App () {
 
   const closeContextMenu = () => setContextMenuPos(null)
 
+  const selectAll = () => {
+    setSelection(
+      Object.fromEntries(circuit.gates.map((gate) => [gate.id, true]))
+    )
+    closeContextMenu()
+  }
+
   const copy = () => {
     /* Copy the selection. */
     setCopiedGates(
@@ -321,6 +328,7 @@ function App () {
       >
         <MenuItem onClick={copy}>Copy</MenuItem>
         <MenuItem onClick={paste}>Paste</MenuItem>
+        <MenuItem onClick={selectAll}>Select all</MenuItem>
       </Menu>
     </div>
   )
