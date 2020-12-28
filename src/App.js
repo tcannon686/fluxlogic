@@ -13,6 +13,8 @@ import Container from '@material-ui/core/Container'
 import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
 import Snackbar from '@material-ui/core/Snackbar'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
 
 /* Icons. */
 import StopIcon from '@material-ui/icons/Stop'
@@ -80,6 +82,9 @@ function App () {
   const [selection, setSelection] = useState(false)
   const [simState, setSimState] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [copiedGates, setCopiedGates] = useState(null)
+  const [contextMenuPos, setContextMenuPos] = useState(null)
+
   const simWorker = useRef(new SimWorker())
 
   /* For opening and closing the upload error snackbar. */
@@ -90,6 +95,27 @@ function App () {
   const pageRef = React.createRef()
 
   const classes = useStyles()
+
+  const closeContextMenu = () => setContextMenuPos(null)
+
+  const copy = () => {
+    /* Copy the selection. */
+    setCopiedGates(
+      logic.removeInvalidConnections(
+        circuit.gates.filter((gate) => selection[gate.id])
+      )
+    )
+    closeContextMenu()
+  }
+
+  const paste = () => {
+    /* Renumber the circuit so we have no ID collisions. */
+    const clone = logic.renumber(circuit)
+    /* Append the copied gates to the circuit. */
+    clone.gates = clone.gates.concat(copiedGates)
+    setCircuit(clone)
+    closeContextMenu()
+  }
 
   const onPlayButtonClicked = () => {
     if (!isPlaying) {
@@ -122,30 +148,7 @@ function App () {
 
     /* Remove the selected gates. */
     clone.gates = clone.gates.filter((gate) => !selection[gate.id])
-
-    /* Create an object containing the IDs of all valid pins. */
-    const validPins = Object.fromEntries(clone.gates.reduce(
-      (t, gate) => t.concat(
-        gate.inputs.map((pin) => pin.id),
-        gate.outputs.map((pin) => pin.id)),
-      []
-    ).map((id) => [id, true]))
-
-    /* Remove all connections that point to a deleted pin. */
-    clone.gates = clone.gates.map((gate) => {
-      const gateClone = { ...gate }
-      const updatePin = (pin) => {
-        return {
-          ...pin,
-          connections: pin.connections.filter((id) => validPins[id])
-        }
-      }
-
-      gateClone.inputs = gateClone.inputs.map(updatePin)
-      gateClone.outputs = gateClone.outputs.map(updatePin)
-      return gateClone
-    })
-
+    clone.gates = logic.removeInvalidConnections(clone.gates)
     setCircuit(clone)
   }
 
@@ -276,7 +279,12 @@ function App () {
       <Toolbar />
       <main className={classes.content}>
         <Toolbar />
-        <Container>
+        <Container
+          onContextMenu={(event) => {
+            event.preventDefault()
+            setContextMenuPos([event.clientX - 2, event.clientY - 4])
+          }}
+        >
           <Page
             circuit={circuit}
             theme={defaultTheme}
@@ -302,6 +310,18 @@ function App () {
         onClose={() => { setOpenUploadError(false) }}
         message="Uh oh! We weren't able to load that file."
       />
+      <Menu
+        keepMounted
+        open={contextMenuPos !== null}
+        onClose={closeContextMenu}
+        anchorReference='anchorPosition'
+        anchorPosition={
+          contextMenuPos && { left: contextMenuPos[0], top: contextMenuPos[1] }
+        }
+      >
+        <MenuItem onClick={copy}>Copy</MenuItem>
+        <MenuItem onClick={paste}>Paste</MenuItem>
+      </Menu>
     </div>
   )
 }

@@ -37,6 +37,13 @@ you can delete your selection by clicking the trash can icon in the app bar.
 Remember that you can always undo a deletion by clicking the undo or redo button
 in the app bar!
 
+### Copying logic gates
+
+To copy a logic gate, select it, right click anywhere on the page, and click
+'copy'. To paste, right click anywhere on the page and click 'paste'. The
+copied logic gates will be placed in the exact position that they were copied
+in, and will be selected after they are pasted.
+
 ### Adding wires
 
 Once a logic component is added, you will see red 'pins' for its inputs and

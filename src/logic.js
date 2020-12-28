@@ -184,9 +184,15 @@ function fastForward (circuit, n, state) {
 
 /*
  * Function to return a unique id. This should only be used within this JS file.
+ * The ID wraps around to 0 once Number.MAX_SAFE_INTEGER is reached. This is
+ * assumed to be okay since Number.MAX_SAFE_INTEGER is so large.
  */
 let currentId = 0
 function nextId () {
+  if (currentId >= Number.MAX_SAFE_INTEGER) {
+    currentId = 0
+  }
+
   return currentId++
 }
 
@@ -196,44 +202,96 @@ function nextId () {
  * collisions. It returns the circuit.
  */
 function renumber (circuit) {
+  const clone = { ...circuit }
   let maxId = currentId
 
+  const calcNewId = (id) => currentId < (Number.MAX_SAFE_INTEGER - id)
+    ? id + currentId
+    : (id - Number.MAX_SAFE_INTEGER) + currentId
+
   const updateId = (object) => {
-    object.id += currentId
-    if (object.id > maxId) {
-      maxId = object.id
+    const clone = {
+      ...object,
+      id: calcNewId(object.id)
+    }
+    if (clone.id > maxId) {
+      maxId = clone.id
     }
 
-    if (object.connections) {
-      object.connections = object.connections.map((id) => id + currentId)
+    if (clone.connections) {
+      clone.connections = clone.connections.map(calcNewId)
     }
+    return clone
   }
 
-  circuit.gates.forEach((gate) => {
-    updateId(gate)
-    gate.inputs.forEach(updateId)
-    gate.outputs.forEach(updateId)
+  clone.gates = clone.gates.map((gate) => {
+    const r = updateId(gate)
+    r.inputs = r.inputs.map(updateId)
+    r.outputs = r.outputs.map(updateId)
+    return r
   })
 
   currentId = maxId + 1
 
-  return circuit
+  return clone
+}
+
+/**
+ * Create an object containing the IDs of all valid pins for the given gates.
+ */
+const getValidPins = (gates) => (
+  Object.fromEntries(gates.reduce(
+    (t, gate) => t.concat(
+      gate.inputs.map((pin) => pin.id),
+      gate.outputs.map((pin) => pin.id)),
+    []
+  ).map((id) => [id, true]))
+)
+
+/**
+ * Returns a new list of gates from the given list of gates with the
+ * connections to invalid pins removed.
+ */
+const removeInvalidConnections = (gates) => {
+  const validPins = getValidPins(gates)
+
+  /* Remove all connections that point to a deleted pin. */
+  return gates.map((gate) => {
+    const gateClone = { ...gate }
+    const updatePin = (pin) => {
+      return {
+        ...pin,
+        connections: pin.connections.filter((id) => validPins[id])
+      }
+    }
+
+    gateClone.inputs = gateClone.inputs.map(updatePin)
+    gateClone.outputs = gateClone.outputs.map(updatePin)
+    return gateClone
+  })
 }
 
 export default {
-  connect,
+  /* Simulation. */
   nextState,
   getOutputs,
   getInputs,
   getUserInput,
   setUserInput,
   fastForward,
+
+  /* Circuit creation. */
   renumber,
+  connect,
   circuit,
   andGate,
   orGate,
   constantGate,
   switchGate,
   led,
-  buffer
+  buffer,
+
+  /* Utils. */
+  removeInvalidConnections,
+  getValidPins
 }

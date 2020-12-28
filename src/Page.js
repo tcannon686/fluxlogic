@@ -142,7 +142,7 @@ const Page = React.forwardRef((props, ref) => {
   }
 
   const onGateClick = useCallback((e, gate) => {
-    if (isEditable) {
+    if (isEditable && e.button === 0) {
       if (!didDrag) {
         const newSelection = {}
         if (e.shiftKey) {
@@ -167,7 +167,7 @@ const Page = React.forwardRef((props, ref) => {
   ])
 
   const onGateMouseDown = useCallback((e, gate) => {
-    if (isEditable) {
+    if (isEditable && e.button === 0) {
       setMoveStart([e.clientX, e.clientY])
       setMoveEnd([e.clientX, e.clientY])
       setDidDrag(false)
@@ -258,7 +258,7 @@ const Page = React.forwardRef((props, ref) => {
   }, [circuit, onCircuitChanged])
 
   const onPinMouseDown = useCallback((e, pin, isOutputPin) => {
-    if (isEditable) {
+    if (isEditable && e.button === 0) {
       /* If the pin is an output pin, start dragging a wire from it. */
       if (isOutputPin) {
         setWireStartPin(pin.id)
@@ -371,7 +371,7 @@ const Page = React.forwardRef((props, ref) => {
     const onMouseUp = (e) => {
       if (!isEditable) {
         e.preventDefault()
-      } else {
+      } else if (e.button === 0) {
         if (isDragging) {
           onMove(moveAmount)
           setIsDragging(false)
@@ -416,7 +416,7 @@ const Page = React.forwardRef((props, ref) => {
     <div
       className={classes.page} ref={ref}
       onMouseDown={(e) => {
-        if (isEditable) {
+        if (isEditable && e.button === 0) {
           setSelectionStart([e.clientX, e.clientY])
 
           /* Reset the selection if the user did not click shift. */

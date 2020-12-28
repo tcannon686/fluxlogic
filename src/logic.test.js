@@ -257,6 +257,25 @@ test('simulates buffer', () => {
   expect(logic.getOutputs(gates[1], state)).toEqual([true])
 })
 
+test('simulates switch', () => {
+  const gates = [
+    logic.switchGate(),
+    logic.led()
+  ]
+
+  logic.connect(gates[0].outputs[0], gates[1].inputs[0])
+
+  const circuit = logic.circuit(gates)
+  let state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[0], state)).toEqual([false])
+  expect(logic.getInputs(gates[1], state)).toEqual([false])
+
+  logic.setUserInput(gates[0], state, true)
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[0], state)).toEqual([true])
+  expect(logic.getInputs(gates[1], state)).toEqual([true])
+})
+
 test('can serialize state', () => {
   const gates = [
     logic.constantGate(false),
@@ -333,21 +352,37 @@ test('renumbers circuit', () => {
   })
 })
 
-test('simulates switch', () => {
+test('getValidPins returns valid pins', () => {
   const gates = [
     logic.switchGate(),
+    logic.andGate(),
+    logic.led()
+  ]
+
+  expect(logic.getValidPins(gates)).toEqual({
+    [gates[0].outputs[0].id]: true,
+    [gates[1].inputs[0].id]: true,
+    [gates[1].inputs[1].id]: true,
+    [gates[1].outputs[0].id]: true,
+    [gates[2].inputs[0].id]: true
+  })
+})
+
+test('removeInvalidConnections removes invalid connections', () => {
+  const gates = [
+    logic.switchGate(),
+    logic.andGate(),
     logic.led()
   ]
 
   logic.connect(gates[0].outputs[0], gates[1].inputs[0])
+  gates[1].inputs[1].connections.push(-1)
+  gates[2].inputs[0].connections.push(-2)
 
-  const circuit = logic.circuit(gates)
-  let state = logic.fastForward(circuit, 10)
-  expect(logic.getOutputs(gates[0], state)).toEqual([false])
-  expect(logic.getInputs(gates[1], state)).toEqual([false])
+  const newGates = logic.removeInvalidConnections(gates)
 
-  logic.setUserInput(gates[0], state, true)
-  state = logic.fastForward(circuit, 10, state)
-  expect(logic.getOutputs(gates[0], state)).toEqual([true])
-  expect(logic.getInputs(gates[1], state)).toEqual([true])
+  expect(newGates[1].inputs[1].connections).toEqual([])
+  expect(newGates[2].inputs[0].connections).toEqual([])
+  expect(newGates[0].outputs[0].connections).toEqual([newGates[1].inputs[0].id])
+  expect(newGates[1].inputs[0].connections).toEqual([newGates[0].outputs[0].id])
 })
