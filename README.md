@@ -3,6 +3,8 @@
 Welcome to MML2, a logic circuit editor and simulator developed using React. The
 goal of the project is to create a program similar to [MultiMedia Logic
 (MML)](https://www.softronix.com/logic.html) using more up to date software.
+Currently, MML2 is hosted on GitHub pages and is available
+[here](https://tcannon686.github.io/mml2).
 
 Current development is focused on emulating some of the core functionality of
 MML. A Kanban board with a list of completed and in progress tasks is available
@@ -108,6 +110,12 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+### `yarn deploy`
+
+Deploys the app to GitHub pages. The deployed URL is taken from the `homepage`
+field from package.json. The app is deployed to
+<https://tcannon686.github.io/mml2>
 
 ## Learn More
 
