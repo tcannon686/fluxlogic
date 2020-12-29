@@ -4,6 +4,9 @@
 const nextOutputFunctions = {
   and: (gate, state) => [getInputs(gate, state).every((x) => x)],
   or: (gate, state) => [getInputs(gate, state).some((x) => x)],
+  xor: (gate, state) => [
+    getInputs(gate, state).filter((x) => x).length % 2 !== 0
+  ],
   constant: (gate, state) => [gate.value],
   led: (gate, state) => [],
   buffer: (gate, state) => getInputs(gate, state),
@@ -50,6 +53,16 @@ function orGate () {
   return {
     id: nextId(),
     type: 'or',
+    inputs: [pin(), pin()],
+    outputs: Object.seal([pin()])
+  }
+}
+
+/** Creates an xor gate. */
+function xorGate () {
+  return {
+    id: nextId(),
+    type: 'xor',
     inputs: [pin(), pin()],
     outputs: Object.seal([pin()])
   }
@@ -286,6 +299,7 @@ export default {
   circuit,
   andGate,
   orGate,
+  xorGate,
   constantGate,
   switchGate,
   led,

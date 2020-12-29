@@ -62,6 +62,30 @@ test('simulates or-gate', () => {
   }
 })
 
+test('simulates xor-gate', () => {
+  const gates = [
+    logic.constantGate(false),
+    logic.constantGate(false),
+    logic.xorGate()
+  ]
+
+  const circuit = logic.circuit(gates)
+
+  logic.connect(gates[0].outputs[0], gates[2].inputs[0])
+  logic.connect(gates[1].outputs[0], gates[2].inputs[1])
+
+  for (let i = 0; i < 4; i++) {
+    const a = (i & 1) === 1
+    const b = (i & 2) === 2
+
+    gates[0].value = a
+    gates[1].value = b
+
+    const state = logic.fastForward(circuit, 10)
+    expect(logic.getOutputs(gates[2], state)).toEqual([(a ^ b) === 1])
+  }
+})
+
 test('simulates (a or b) and c', () => {
   const gates = [
     logic.constantGate(false),

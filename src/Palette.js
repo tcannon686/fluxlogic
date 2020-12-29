@@ -6,6 +6,7 @@ import Grid from '@material-ui/core/Grid'
 
 import AndGateSvg from './assets/and-gate.svg'
 import OrGateSvg from './assets/or-gate.svg'
+import XorGateSvg from './assets/xor-gate.svg'
 import OneGateSvg from './assets/one-gate.svg'
 import ZeroGateSvg from './assets/zero-gate.svg'
 import LedSvg from './assets/led.svg'
@@ -107,6 +108,11 @@ function Palette (props) {
         text='NOR gate'
         onClick={() => props.onSelect(() => invert(logic.orGate()))}
         inverted
+      />
+      <PaletteItem
+        svg={XorGateSvg}
+        text='XOR gate'
+        onClick={() => props.onSelect(logic.xorGate)}
       />
       <PaletteItem
         svg={ZeroGateSvg}

@@ -8,6 +8,7 @@ import logic from './logic'
 /* SVGs */
 import AndGateSvg from './assets/and-gate.svg'
 import OrGateSvg from './assets/or-gate.svg'
+import XorGateSvg from './assets/xor-gate.svg'
 import OpenPinSvg from './assets/open-pin.svg'
 import OpenPinInvertedSvg from './assets/open-pin-inverted.svg'
 import PinSvg from './assets/pin.svg'
@@ -23,6 +24,7 @@ import SwitchOnSvg from './assets/switch-on.svg'
 const defaultThemeSvgs = {
   and: () => AndGateSvg,
   or: () => OrGateSvg,
+  xor: () => XorGateSvg,
   buffer: () => BufferGateSvg,
   led: (gate, state) =>
     state
