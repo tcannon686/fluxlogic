@@ -5,8 +5,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator'
 const useStyles = makeStyles((theme) => ({
   selectionBox: {
     position: 'fixed',
-    border: `1px solid ${theme.palette.primary.main}`,
-    background: fade(theme.palette.primary.main, 0.25),
+    background: fade(theme.palette.primary.main, 0.3),
     pointerEvents: 'none'
   }
 }))

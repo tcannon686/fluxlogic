@@ -7,11 +7,9 @@ import Wire from './Wire'
 const useStyles = makeStyles((theme) => ({
   selectedGate: {
     position: 'absolute',
-    margin: '-1px',
     left: 0,
     top: 0,
-    border: `1px solid ${theme.palette.primary.main}`,
-    background: fade(theme.palette.primary.main, 0.25),
+    background: fade(theme.palette.primary.main, 0.3),
     borderRadius: '4px',
     cursor: 'move'
   },
@@ -32,12 +30,10 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: 0,
     top: 0,
-    margin: '-1px',
-    border: '1px solid #ffffff00',
     borderRadius: '4px',
     cursor: 'pointer',
     '&:hover': {
-      border: `1px solid ${theme.palette.primary.main}`
+      background: fade(theme.palette.primary.main, 0.15)
     }
   },
 
@@ -47,8 +43,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '4px',
     cursor: 'pointer',
     '&:hover': {
-      border: `1px solid ${theme.palette.primary.main}`,
-      margin: '-1px'
+      background: fade(theme.palette.primary.main, 0.3)
     }
   }
 }))
