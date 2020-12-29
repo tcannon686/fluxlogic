@@ -25,6 +25,7 @@ import UndoIcon from '@material-ui/icons/Undo'
 import HelpIcon from '@material-ui/icons/Help'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -77,6 +78,56 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+function PageChanger (props) {
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const classes = useStyles()
+
+  const onClose = () => setAnchorEl(null)
+  const onClick = (e) => setAnchorEl(e.currentTarget)
+
+  const menuItems = []
+  for (let i = 0; i <= props.pageCount; i++) {
+    menuItems.push(
+      <MenuItem
+        onClick={() => {
+          props.onChangedPage(i)
+          onClose()
+        }}
+      >
+        Page {i + 1}
+      </MenuItem>
+    )
+  }
+
+  return (
+    <>
+      <Tooltip title='Change page'>
+        <Button
+          aria-controls='simple-menu'
+          aria-haspopup='true'
+          aria-label='change page'
+          className={classes.menuButton}
+          color='inherit'
+          onClick={onClick}
+        >
+          Page {1 + props.page}
+          <ExpandMoreIcon />
+        </Button>
+      </Tooltip>
+
+      <Menu
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={onClose}
+        anchorEl={anchorEl}
+      >
+        {menuItems}
+      </Menu>
+    </>
+  )
+}
+
 function App () {
   const [circuit, setCircuit, undo, redo] = useUndoable(() => logic.circuit([]))
   const [selection, setSelection] = useState(false)
@@ -84,6 +135,8 @@ function App () {
   const [isPlaying, setIsPlaying] = useState(false)
   const [copiedGates, setCopiedGates] = useState(null)
   const [contextMenuPos, setContextMenuPos] = useState(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
   const simWorker = useRef(new SimWorker())
 
@@ -98,9 +151,43 @@ function App () {
 
   const closeContextMenu = () => setContextMenuPos(null)
 
+  const downloadProject = () => {
+    download('circuit.json', {
+      version: packageJson.version,
+      circuit,
+      currentPage
+    })
+  }
+
+  const uploadProject = () =>
+    upload()
+      .then((data) => {
+        setCircuit(logic.renumber(data.circuit))
+
+        const maxPage = data.circuit.gates.reduce(
+          (maxPage, gate) => gate.page ? Math.max(maxPage, gate.page) : maxPage,
+          0
+        )
+
+        const page = data.currentPage || 0
+
+        /* Set the number of pages available to the user. */
+        setPageCount(Math.max(page, maxPage + 1))
+
+        /* Goto the first page, or the current page that was saved. */
+        setCurrentPage(page)
+      })
+      .catch((error) => {
+        setOpenUploadError(true)
+        console.error(error)
+      })
+
   const selectAll = () => {
     setSelection(
-      Object.fromEntries(circuit.gates.map((gate) => [gate.id, true]))
+      Object.fromEntries(
+        circuit.gates
+          .filter((gate) => (gate.page || 0) === currentPage)
+          .map((gate) => [gate.id, true]))
     )
     closeContextMenu()
   }
@@ -119,7 +206,13 @@ function App () {
     /* Renumber the circuit so we have no ID collisions. */
     const clone = logic.renumber(circuit)
     /* Append the copied gates to the circuit. */
-    clone.gates = clone.gates.concat(copiedGates)
+    clone.gates = [
+      ...clone.gates,
+      ...copiedGates.map((gate) => ({
+        ...gate,
+        page: currentPage
+      }))
+    ]
     setCircuit(clone)
     closeContextMenu()
   }
@@ -184,6 +277,8 @@ function App () {
             gate.y = (
               (window.innerHeight + appBarRect.height) / 2 - pageRect.top) / 96
 
+            gate.page = currentPage
+
             /* Update with the new circuit. */
             setCircuit(clone)
           }}
@@ -195,6 +290,17 @@ function App () {
 
           <Typography variant='h6' className={classes.title}>MML2</Typography>
 
+          <PageChanger
+            page={currentPage}
+            pageCount={pageCount}
+            onChangedPage={(page) => {
+              setCurrentPage(page)
+              if (page >= pageCount) {
+                setPageCount(page + 1)
+              }
+            }}
+          />
+
           <ButtonGroup
             className={classes.menuButtonGroup}
             color='inherit'
@@ -202,16 +308,7 @@ function App () {
             <Tooltip title='Upload project'>
               <Button
                 aria-label='upload'
-                onClick={
-                  () => upload()
-                    .then((data) => {
-                      setCircuit(logic.renumber(data.circuit))
-                    })
-                    .catch((error) => {
-                      setOpenUploadError(true)
-                      console.error(error)
-                    })
-                }
+                onClick={uploadProject}
               >
                 <CloudUploadIcon />
               </Button>
@@ -219,12 +316,7 @@ function App () {
             <Tooltip title='Download project'>
               <Button
                 aria-label='download'
-                onClick={() => {
-                  download('circuit.json', {
-                    version: packageJson.version,
-                    circuit
-                  })
-                }}
+                onClick={downloadProject}
               >
                 <CloudDownloadIcon />
               </Button>
@@ -293,6 +385,7 @@ function App () {
           }}
         >
           <Page
+            page={currentPage}
             circuit={circuit}
             theme={defaultTheme}
             ref={pageRef}

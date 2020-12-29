@@ -55,6 +55,7 @@ const Page = React.forwardRef((props, ref) => {
 
   const isEditable = props.editable
   const circuit = props.circuit
+  const page = props.page
 
   const onCircuitChanged = props.onCircuitChanged
 
@@ -86,6 +87,13 @@ const Page = React.forwardRef((props, ref) => {
   /* Whether or not the pin being dragged from is an output pin. */
   const [wireStartPinIsOutput, setWireStartPinIsOutput] = useState(false)
 
+  /* The gates on the current page. */
+  const gates = useMemo(() => page !== undefined
+    ? circuit.gates.filter((gate) => (gate.page || 0) === page)
+    : circuit.gates,
+  [circuit, page]
+  )
+
   /* The amount to move teh selected components in page coordinates. */
   const moveAmount = isDragging
     ? [
@@ -115,7 +123,7 @@ const Page = React.forwardRef((props, ref) => {
     let clone = null
 
     /* Determine if any items were added to the selection. */
-    circuit.gates.forEach((gate) => {
+    gates.forEach((gate) => {
       const width = props.theme.getWidth(gate)
       const height = props.theme.getHeight(gate)
 
@@ -439,6 +447,7 @@ const Page = React.forwardRef((props, ref) => {
         )
       }
       <Circuit
+        page={props.page}
         circuit={circuit}
         editable={isEditable}
         selection={totalSelection}

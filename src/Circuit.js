@@ -12,6 +12,14 @@ export default function Circuit (props) {
 
   const isEditable = props.editable
   const circuit = props.circuit
+  const page = props.page
+
+  /* The gates on the current page. */
+  const gates = useMemo(() => page !== undefined
+    ? circuit.gates.filter((gate) => (gate.page || 0) === page)
+    : circuit.gates,
+  [circuit, page]
+  )
 
   const selection = props.selection
   const moveAmount = props.moveAmount
@@ -23,7 +31,7 @@ export default function Circuit (props) {
     const positions = {}
 
     /* Calculate the pin positions. */
-    circuit.gates.forEach((gate) => {
+    gates.forEach((gate) => {
       const x = (gate.x || 0) + (selection[gate.id] ? moveAmount[0] : 0)
       const y = (gate.y || 0) + (selection[gate.id] ? moveAmount[1] : 0)
 
@@ -31,7 +39,7 @@ export default function Circuit (props) {
     })
 
     return positions
-  }, [selection, theme, moveAmount, circuit])
+  }, [selection, theme, moveAmount, gates])
 
   const onGateClick = useRefCallback(props.onGateClick, [])
   const onGateMouseDown = useRefCallback(props.onGateMouseDown, [])
@@ -43,7 +51,7 @@ export default function Circuit (props) {
     <>
       {
         /* Wires */
-        circuit.gates.map(
+        gates.map(
           (gate) => gate.inputs
             .filter((pin) => pin.connections[0])
             .map((pin) =>
@@ -58,7 +66,7 @@ export default function Circuit (props) {
 
       {
         /* Gates */
-        circuit.gates.map((gate) => {
+        gates.map((gate) => {
           const x = (gate.x || 0) +
             (props.selection[gate.id] ? moveAmount[0] : 0)
           const y = (gate.y || 0) +

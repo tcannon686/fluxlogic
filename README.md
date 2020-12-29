@@ -14,9 +14,10 @@ contribute please follow this style, or use `yarn lint --fix`.
 
 ## Usage
 
-First, you need to start a server for the project somehow. See the Available
-Scripts section below for information on how to do that. Once the project is
-started, you should open it up in your browser.
+First, you need to start a server for the project. See the Available Scripts
+section below for information on how to start a server, or use the production
+build of MML2 hosted [here](https://tcannon686.github.io/mml2). Once the project
+is started, you should open it up in your browser.
 
 ### Adding logic gates
 
@@ -64,6 +65,19 @@ drag it to an output pin to connect it. Note that when an input pin has no
 connections, clicking and dragging it will add a new connection. In addition,
 clicking and dragging an output pin that already has a connection will add a new
 connection, not delete the current connection.
+
+### Using multiple pages
+
+MML2 allows you to split up circuits into multiple pages. Adding logic gates,
+making selections, and pasting occurs on the current page. To change the current
+page, locate the button that says 'Page 1' in the toolbar. Click the button, and
+select a new page from the menu. To add a new page, click on the last page in
+the list. If you click the current page button again, a new page will become
+available for you to select from the menu.
+
+To delete a page, simply remove all of the logic gates from that page. The page
+will still be accessible from the menu, but it will go away if you save and
+reupload the project.
 
 ---
 
