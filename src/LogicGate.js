@@ -99,9 +99,9 @@ const LogicGate = React.memo((props) => {
         height: `${height}in`
       }}
       className={
-        isSelected
-          ? classes.selectedGate
-          : (props.editable ? classes.editableGate : classes.gate)
+        props.editable
+          ? (isSelected ? classes.selectedGate : classes.editableGate)
+          : classes.gate
       }
     >
 
