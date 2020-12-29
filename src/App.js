@@ -203,17 +203,19 @@ function App () {
   }
 
   const paste = () => {
-    /* Renumber the circuit so we have no ID collisions. */
-    const clone = logic.renumber(circuit)
-    /* Append the copied gates to the circuit. */
-    clone.gates = [
-      ...clone.gates,
-      ...copiedGates.map((gate) => ({
-        ...gate,
-        page: currentPage
-      }))
-    ]
-    setCircuit(clone)
+    if (copiedGates) {
+      /* Renumber the circuit so we have no ID collisions. */
+      const clone = logic.renumber(circuit)
+      /* Append the copied gates to the circuit. */
+      clone.gates = [
+        ...clone.gates,
+        ...copiedGates.map((gate) => ({
+          ...gate,
+          page: currentPage
+        }))
+      ]
+      setCircuit(clone)
+    }
     closeContextMenu()
   }
 
@@ -253,7 +255,13 @@ function App () {
   }
 
   return (
-    <div className={classes.root}>
+    <div
+      className={classes.root}
+      onContextMenu={(event) => {
+        event.preventDefault()
+        setContextMenuPos([event.clientX - 2, event.clientY - 4])
+      }}
+    >
       <CssBaseline />
 
       <Drawer variant='persistent' className={classes.drawer} open>
@@ -378,12 +386,7 @@ function App () {
       <Toolbar />
       <main className={classes.content}>
         <Toolbar />
-        <Container
-          onContextMenu={(event) => {
-            event.preventDefault()
-            setContextMenuPos([event.clientX - 2, event.clientY - 4])
-          }}
-        >
+        <Container>
           <Page
             page={currentPage}
             circuit={circuit}
