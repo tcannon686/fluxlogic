@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
+
 import { makeStyles } from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
+
 import logic from './logic'
 
 import Wire from './Wire'
@@ -10,11 +13,7 @@ const useStyles = makeStyles((theme) => ({
   page: {
     width: '8.5in',
     height: '11in',
-    background: 'white',
-    position: 'relative',
-    margin: 'auto',
-    boxShadow: '0 0 .05in #aaa',
-    marginBottom: '0.1in'
+    position: 'relative'
   }
 }))
 
@@ -421,8 +420,11 @@ const Page = React.forwardRef((props, ref) => {
   }, [isDragging, didDrag, isEditable])
 
   return (
-    <div
-      className={classes.page} ref={ref}
+    <Paper
+      elevation={3}
+      square
+      className={classes.page}
+      ref={ref}
       onMouseDown={(e) => {
         if (isEditable && e.button === 0) {
           setSelectionStart([e.clientX, e.clientY])
@@ -467,7 +469,7 @@ const Page = React.forwardRef((props, ref) => {
           />
         )
       }
-    </div>
+    </Paper>
   )
 })
 
