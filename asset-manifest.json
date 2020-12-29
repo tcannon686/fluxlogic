@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/mml2/static/css/main.5ecd60fb.chunk.css",
-    "main.js": "/mml2/static/js/main.8640fe9f.chunk.js",
-    "main.js.map": "/mml2/static/js/main.8640fe9f.chunk.js.map",
+    "main.js": "/mml2/static/js/main.6d0e193c.chunk.js",
+    "main.js.map": "/mml2/static/js/main.6d0e193c.chunk.js.map",
     "runtime-main.js": "/mml2/static/js/runtime-main.b223a939.js",
     "runtime-main.js.map": "/mml2/static/js/runtime-main.b223a939.js.map",
-    "static/js/2.72ec3739.chunk.js": "/mml2/static/js/2.72ec3739.chunk.js",
-    "static/js/2.72ec3739.chunk.js.map": "/mml2/static/js/2.72ec3739.chunk.js.map",
-    "b9bb5a2dee40b8b08840.worker.js": "/mml2/b9bb5a2dee40b8b08840.worker.js",
-    "b9bb5a2dee40b8b08840.worker.js.map": "/mml2/b9bb5a2dee40b8b08840.worker.js.map",
+    "static/js/2.985be558.chunk.js": "/mml2/static/js/2.985be558.chunk.js",
+    "static/js/2.985be558.chunk.js.map": "/mml2/static/js/2.985be558.chunk.js.map",
+    "1995daae4a069d13b604.worker.js": "/mml2/1995daae4a069d13b604.worker.js",
+    "1995daae4a069d13b604.worker.js.map": "/mml2/1995daae4a069d13b604.worker.js.map",
     "index.html": "/mml2/index.html",
-    "precache-manifest.5d536229ecdd4c1648281310aa461e95.js": "/mml2/precache-manifest.5d536229ecdd4c1648281310aa461e95.js",
+    "precache-manifest.29abbb524e2eeb9812c7f4bd819739ec.js": "/mml2/precache-manifest.29abbb524e2eeb9812c7f4bd819739ec.js",
     "service-worker.js": "/mml2/service-worker.js",
     "static/css/main.5ecd60fb.chunk.css.map": "/mml2/static/css/main.5ecd60fb.chunk.css.map",
-    "static/js/2.72ec3739.chunk.js.LICENSE.txt": "/mml2/static/js/2.72ec3739.chunk.js.LICENSE.txt",
+    "static/js/2.985be558.chunk.js.LICENSE.txt": "/mml2/static/js/2.985be558.chunk.js.LICENSE.txt",
     "static/media/and-gate.svg": "/mml2/static/media/and-gate.b39df76c.svg",
     "static/media/buffer-gate.svg": "/mml2/static/media/buffer-gate.96d07f6a.svg",
     "static/media/led-glow.svg": "/mml2/static/media/led-glow.ff1875d8.svg",
@@ -26,12 +26,13 @@
     "static/media/pin.svg": "/mml2/static/media/pin.4c8eaca6.svg",
     "static/media/switch-off.svg": "/mml2/static/media/switch-off.b1ab986c.svg",
     "static/media/switch-on.svg": "/mml2/static/media/switch-on.37d11db0.svg",
+    "static/media/xor-gate.svg": "/mml2/static/media/xor-gate.12bb51fa.svg",
     "static/media/zero-gate.svg": "/mml2/static/media/zero-gate.d126f49d.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.b223a939.js",
-    "static/js/2.72ec3739.chunk.js",
+    "static/js/2.985be558.chunk.js",
     "static/css/main.5ecd60fb.chunk.css",
-    "static/js/main.8640fe9f.chunk.js"
+    "static/js/main.6d0e193c.chunk.js"
   ]
 }
