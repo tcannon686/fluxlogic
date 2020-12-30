@@ -20,6 +20,8 @@ import LedSvg from './assets/led.svg'
 import LedGlowSvg from './assets/led-glow.svg'
 import SwitchOffSvg from './assets/switch-off.svg'
 import SwitchOnSvg from './assets/switch-on.svg'
+import SenderSvg from './assets/sender.svg'
+import ReceiverSvg from './assets/receiver.svg'
 
 const defaultThemeSvgs = {
   and: () => AndGateSvg,
@@ -34,7 +36,9 @@ const defaultThemeSvgs = {
   switch: (gate, state) =>
     state
       ? (logic.getUserInput(gate, state) ? SwitchOnSvg : SwitchOffSvg)
-      : SwitchOffSvg
+      : SwitchOffSvg,
+  sender: () => SenderSvg,
+  receiver: () => ReceiverSvg
 }
 
 const defaultTheme = {

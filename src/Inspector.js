@@ -14,6 +14,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
+/**
+ * A react component for the inspector. The inspector allows the user to modify
+ * the properties of each logic gate through a forms-style user interface.
+ */
 export default function Inspector (props) {
   const { circuit, selection } = props
   const classes = useStyles()
@@ -33,13 +37,32 @@ export default function Inspector (props) {
     [selectedGates]
   )
 
+  const sharedLabel = useMemo(
+    () => selectedGates.reduce((label, gate) =>
+      label === undefined
+        ? gate.label || ''
+        : (gate.label === label && gate.label !== undefined ? label : ''),
+    undefined) || '',
+    [selectedGates]
+  )
+
+  const allHaveLabels = useMemo(
+    () => selectedGates.every((gate) => gate.label !== undefined),
+    [selectedGates]
+  )
+
   const [x, setX] = useState(0)
   const [y, setY] = useState(0)
+  const [label, setLabel] = useState('')
 
   useEffect(() => {
     setX(minX)
     setY(minY)
   }, [minX, minY])
+
+  useEffect(() => {
+    setLabel(sharedLabel)
+  }, [sharedLabel])
 
   const updateGates = (callback) => {
     const clone = { ...circuit }
@@ -87,6 +110,22 @@ export default function Inspector (props) {
               updateGates((gate) => ({
                 ...gate,
                 y: Number(e.target.value) - minY + gate.y
+              }))
+            }
+          }}
+        />
+
+        <TextField
+          label='Label'
+          variant='filled'
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          disabled={!allHaveLabels}
+          onBlur={(e) => {
+            if (e.target.value.length > 0) {
+              updateGates((gate) => ({
+                ...gate,
+                label: e.target.value
               }))
             }
           }}

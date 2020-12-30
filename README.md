@@ -77,7 +77,23 @@ available for you to select from the menu.
 
 To delete a page, simply remove all of the logic gates from that page. The page
 will still be accessible from the menu, but it will go away if you save and
-reupload the project.
+reupload the project. Multiple pages are only useful if you use senders and
+receivers to share information between pages. See below for more details.
+
+### Using senders and receivers
+
+It is often useful to label the inputs and outputs of a circuit and use them
+elsewhere in the circuit. In MML2, this is accomplished by using senders and
+receivers. Senders and receivers are available from the palette. A sender
+receives a single input, and passes that input to a receiver with the same
+label. A receiver receives that output and sets it as its own output.
+
+You can use multiple sender and receiver pairs within your circuit. Senders and
+receivers are paired by their 'label' attribute. To change the label, select the
+senders and receivers you want to change, then click the 'properties' tab,
+located above the Palette. Next, you should see a text field for 'label'.
+Modify this text, then click off of the text field, and you should see the label
+change for that set of senders and receivers.
 
 ---
 

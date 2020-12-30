@@ -45,6 +45,15 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: fade(theme.palette.primary.main, 0.3)
     }
+  },
+
+  label: {
+    position: 'relative',
+    transform: 'translate(-50%, -50%)',
+    textAlign: 'center',
+    width: '1in',
+    top: '-.1in',
+    pointerEvents: 'none'
   }
 }))
 
@@ -137,6 +146,17 @@ const LogicGate = React.memo((props) => {
         onClick={(e) => props.onGateClick(e, props.gate)}
         onMouseDown={(e) => props.onGateMouseDown(e, props.gate)}
       />
+
+      {
+        props.gate.label && (
+          <p
+            className={classes.label}
+            style={{ left: `${theme.getWidth(props.gate) / 2}in` }}
+          >
+            {props.gate.label}
+          </p>
+        )
+      }
 
       {
         /* Input pins */

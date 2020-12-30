@@ -12,6 +12,8 @@ import ZeroGateSvg from './assets/zero-gate.svg'
 import LedSvg from './assets/led.svg'
 import BufferGateSvg from './assets/buffer-gate.svg'
 import SwitchOffSvg from './assets/switch-off.svg'
+import SenderSvg from './assets/sender.svg'
+import ReceiverSvg from './assets/receiver.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
 
@@ -144,6 +146,16 @@ function Palette (props) {
         svg={SwitchOffSvg}
         text='switch'
         onClick={() => props.onSelect(logic.switchGate)}
+      />
+      <PaletteItem
+        svg={SenderSvg}
+        text='sender'
+        onClick={() => props.onSelect(logic.sender)}
+      />
+      <PaletteItem
+        svg={ReceiverSvg}
+        text='receiver'
+        onClick={() => props.onSelect(logic.receiver)}
       />
     </Grid>
   )
