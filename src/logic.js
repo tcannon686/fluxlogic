@@ -8,9 +8,14 @@ const nextOutputFunctions = {
     getInputs(gate, state).filter((x) => x).length % 2 !== 0
   ],
   constant: (gate, state) => [gate.value],
-  led: (gate, state) => [],
+  led: () => [],
   buffer: (gate, state) => getInputs(gate, state),
-  switch: (gate, state) => [Boolean(getUserInput(gate, state))]
+  switch: (gate, state) => [Boolean(getUserInput(gate, state))],
+  sender: () => [],
+  receiver: (gate, state, circuit) => getInputs(
+    findSender(gate, circuit),
+    state
+  )
 }
 
 /** Connect to logic pins by a wire. */
@@ -110,6 +115,34 @@ function buffer () {
 }
 
 /**
+ * Creates a sender with the given label. A receiver with the same label will
+ * receive the inputs of the sender.
+ */
+function sender (label) {
+  return {
+    id: nextId(),
+    type: 'sender',
+    label: label || 'A',
+    inputs: Object.seal([pin()]),
+    outputs: Object.seal([])
+  }
+}
+
+/**
+ * Creates a receiver with the given label. The receiver will have the same
+ * input values as the sender with the given label.
+ */
+function receiver (label) {
+  return {
+    id: nextId(),
+    type: 'receiver',
+    label: label || 'A',
+    inputs: Object.seal([]),
+    outputs: Object.seal([pin()])
+  }
+}
+
+/**
  * Computes a state object to represent the current state of the simulation for
  * the given circuit. If prevState is passed, returns the next state after the
  * given state.
@@ -132,7 +165,11 @@ function nextState (circuit, prevState) {
   if (prevState) {
     for (const gate of circuit.gates) {
       /* Calculate the next output. */
-      const nextOutputs = nextOutputFunctions[gate.type](gate, prevState)
+      const nextOutputs = nextOutputFunctions[gate.type](
+        gate,
+        prevState,
+        circuit
+      )
 
       for (let i = 0; i < nextOutputs.length; i++) {
         state.outputs[gate.outputs[i].id] = (
@@ -151,6 +188,15 @@ function nextState (circuit, prevState) {
   }
 
   return state
+}
+
+/**
+ * Returns the sender gate for the given receiver gate.
+ */
+function findSender (receiver, circuit) {
+  return circuit.gates.find(
+    (gate) => gate.type === 'sender' && gate.label === receiver.label
+  )
 }
 
 /**
@@ -302,10 +348,13 @@ export default {
   xorGate,
   constantGate,
   switchGate,
+  sender,
+  receiver,
   led,
   buffer,
 
   /* Utils. */
   removeInvalidConnections,
-  getValidPins
+  getValidPins,
+  findSender
 }

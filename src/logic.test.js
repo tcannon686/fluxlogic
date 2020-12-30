@@ -300,6 +300,44 @@ test('simulates switch', () => {
   expect(logic.getInputs(gates[1], state)).toEqual([true])
 })
 
+test('finds sender for receiver', () => {
+  const gates = [
+    logic.sender('test'),
+    logic.sender('test2'),
+    logic.sender('test3'),
+    logic.receiver('test2')
+  ]
+
+  const circuit = logic.circuit(gates)
+  expect(logic.findSender(gates[3], circuit)).toBe(gates[1])
+})
+
+test('receiver has same output as sender', () => {
+  const gates = [
+    logic.constantGate(),
+    logic.sender('test'),
+    logic.receiver('test')
+  ]
+
+  const circuit = logic.circuit(gates)
+
+  logic.connect(gates[0].outputs[0], gates[1].inputs[0])
+
+  let state = logic.fastForward(circuit, 10)
+
+  expect(logic.getOutputs(gates[0], state)).toEqual([false])
+  expect(logic.getOutputs(gates[1], state)).toEqual([])
+  expect(logic.getOutputs(gates[2], state)).toEqual([false])
+
+  gates[0].value = true
+
+  state = logic.fastForward(circuit, 10)
+
+  expect(logic.getOutputs(gates[0], state)).toEqual([true])
+  expect(logic.getOutputs(gates[1], state)).toEqual([])
+  expect(logic.getOutputs(gates[2], state)).toEqual([true])
+})
+
 test('can serialize state', () => {
   const gates = [
     logic.constantGate(false),
