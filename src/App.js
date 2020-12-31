@@ -15,6 +15,10 @@ import Typography from '@material-ui/core/Typography'
 import Snackbar from '@material-ui/core/Snackbar'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import Box from '@material-ui/core/Box'
+import Fade from '@material-ui/core/Fade'
 
 /* Icons. */
 import StopIcon from '@material-ui/icons/Stop'
@@ -29,9 +33,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import { makeStyles } from '@material-ui/core/styles'
 
-/* Page components. */
+/* Editor components. */
 import Page from './Page'
 import Palette from './Palette'
+import Inspector from './Inspector'
 
 /* Logic components. */
 import logic from './logic'
@@ -44,7 +49,7 @@ import { useUndoable } from './hooks'
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import SimWorker from 'workerize-loader!./sim.worker'
 
-const drawerWidth = 256
+const drawerWidth = 320
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,6 +133,29 @@ function PageChanger (props) {
   )
 }
 
+function TabPanel (props) {
+  const { children, value, index, ...other } = props
+
+  return (
+    <Fade
+      in={value === index}
+    >
+      <div
+        role='tabpanel'
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box p={3}>
+            {children}
+          </Box>
+        )}
+      </div>
+    </Fade>
+  )
+}
+
 function App () {
   const [circuit, setCircuit, undo, redo] = useUndoable(() => logic.circuit([]))
   const [selection, setSelection] = useState(false)
@@ -137,6 +165,7 @@ function App () {
   const [contextMenuPos, setContextMenuPos] = useState(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [pageCount, setPageCount] = useState(1)
+  const [tab, setTab] = useState(0)
 
   const simWorker = useRef(new SimWorker())
 
@@ -266,31 +295,53 @@ function App () {
 
       <Drawer variant='persistent' className={classes.drawer} open>
         <Toolbar />
-        <Palette
+        <div
           className={classes.drawerContent}
-          onSelect={(factory) => {
-            /* Clone the circuit. */
-            const clone = { ...circuit }
-            clone.gates = [...clone.gates]
+        >
+          <Tabs
+            onChange={(e, value) => setTab(value)}
+            value={tab}
+            variant='fullWidth'
+          >
+            <Tab label='Palette' />
+            <Tab label='Properties' />
+          </Tabs>
+          <TabPanel value={tab} index={0}>
+            <Palette
+              onSelect={(factory) => {
+                /* Clone the circuit. */
+                const clone = { ...circuit }
+                clone.gates = [...clone.gates]
 
-            /* Place the gate. */
-            const gate = factory()
-            clone.gates.push(gate)
+                /* Place the gate. */
+                const gate = factory()
+                clone.gates.push(gate)
 
-            /* Calculate the gate position. */
-            const appBarRect = appBarRef.current.getBoundingClientRect()
-            const pageRect = pageRef.current.getBoundingClientRect()
+                /* Calculate the gate position. */
+                const appBarRect = appBarRef.current.getBoundingClientRect()
+                const pageRect = pageRef.current.getBoundingClientRect()
 
-            gate.x = ((appBarRect.width + drawerWidth) / 2 - pageRect.left) / 96
-            gate.y = (
-              (window.innerHeight + appBarRect.height) / 2 - pageRect.top) / 96
+                gate.x = ((appBarRect.width + drawerWidth) / 2 -
+                  pageRect.left) / 96
+                gate.y = (
+                  (window.innerHeight + appBarRect.height) / 2 -
+                  pageRect.top) / 96
 
-            gate.page = currentPage
+                gate.page = currentPage
 
-            /* Update with the new circuit. */
-            setCircuit(clone)
-          }}
-        />
+                /* Update with the new circuit. */
+                setCircuit(clone)
+              }}
+            />
+          </TabPanel>
+          <TabPanel value={tab} index={1}>
+            <Inspector
+              circuit={circuit}
+              selection={selection}
+              onCircuitChanged={(circuit) => setCircuit(circuit)}
+            />
+          </TabPanel>
+        </div>
       </Drawer>
 
       <AppBar position='fixed' className={classes.appBar} ref={appBarRef}>
