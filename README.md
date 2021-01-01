@@ -1,10 +1,10 @@
-# MML2
+# Flux Logic
 
-Welcome to MML2, a logic circuit editor and simulator developed using React. The
-goal of the project is to create a program similar to [MultiMedia Logic
-(MML)](https://www.softronix.com/logic.html) using more up to date software.
-Currently, MML2 is hosted on GitHub pages and is available
-[here](https://tcannon686.github.io/mml2).
+Welcome to Flux Logic, a logic circuit editor and simulator developed using
+React. The goal of the project is to create a program similar to [MultiMedia
+Logic (MML)](https://www.softronix.com/logic.html) using more up to date
+software.  Currently, Flux Logic is hosted on GitHub pages and is available
+[here](https://tcannon686.github.io/fluxlogic).
 
 Current development is focused on emulating some of the core functionality of
 MML. A Kanban board with a list of completed and in progress tasks is available
@@ -16,15 +16,15 @@ contribute please follow this style, or use `yarn lint --fix`.
 
 First, you need to start a server for the project. See the Available Scripts
 section below for information on how to start a server, or use the production
-build of MML2 hosted [here](https://tcannon686.github.io/mml2). Once the project
-is started, you should open it up in your browser.
+build of Flux Logic hosted [here](https://tcannon686.github.io/fluxlogic). Once
+the project is started, you should open it up in your browser.
 
 ### Adding logic gates
 
-Once MML2 is open in your browser, you will see the 'Palette', containing a list
-of pictures of logic components, on the left side of the screen. To add a logic
-component to the page, simply click on its icon in the palette. The selected
-logic gate will be added to the center of the page.
+Once Flux Logic is open in your browser, you will see the 'Palette', containing
+a list of pictures of logic components, on the left side of the screen. To add a
+logic component to the page, simply click on its icon in the palette. The
+selected logic gate will be added to the center of the page.
 
 ### Moving and deleting logic gates
 
@@ -43,9 +43,9 @@ in the app bar!
 ### Copying logic gates
 
 To copy a logic gate, select it, right click anywhere on the page, and click
-'copy'. To paste, right click anywhere on the page and click 'paste'. The
-copied logic gates will be placed in the exact position that they were copied
-in, and will be selected after they are pasted.
+'copy'. To paste, right click anywhere on the page and click 'paste'. The copied
+logic gates will be placed in the exact position that they were copied in, and
+will be selected after they are pasted.
 
 ### Adding wires
 
@@ -68,12 +68,12 @@ connection, not delete the current connection.
 
 ### Using multiple pages
 
-MML2 allows you to split up circuits into multiple pages. Adding logic gates,
-making selections, and pasting occurs on the current page. To change the current
-page, locate the button that says 'Page 1' in the toolbar. Click the button, and
-select a new page from the menu. To add a new page, click on the last page in
-the list. If you click the current page button again, a new page will become
-available for you to select from the menu.
+Flux Logic allows you to split up circuits into multiple pages. Adding logic
+gates, making selections, and pasting occurs on the current page. To change the
+current page, locate the button that says 'Page 1' in the toolbar. Click the
+button, and select a new page from the menu. To add a new page, click on the
+last page in the list. If you click the current page button again, a new page
+will become available for you to select from the menu.
 
 To delete a page, simply remove all of the logic gates from that page. The page
 will still be accessible from the menu, but it will go away if you save and
@@ -83,8 +83,8 @@ receivers to share information between pages. See below for more details.
 ### Using senders and receivers
 
 It is often useful to label the inputs and outputs of a circuit and use them
-elsewhere in the circuit. In MML2, this is accomplished by using senders and
-receivers. Senders and receivers are available from the palette. A sender
+elsewhere in the circuit. In Flux Logic, this is accomplished by using senders
+and receivers. Senders and receivers are available from the palette. A sender
 receives a single input, and passes that input to a receiver with the same
 label. A receiver receives that output and sets it as its own output.
 
@@ -145,7 +145,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 Deploys the app to GitHub pages. The deployed URL is taken from the `homepage`
 field from package.json. The app is deployed to
-<https://tcannon686.github.io/mml2>
+<https://tcannon686.github.io/fluxlogic>
 
 ## Learn More
 

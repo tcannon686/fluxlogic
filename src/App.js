@@ -355,7 +355,7 @@ function App () {
       <AppBar position='fixed' className={classes.appBar} ref={appBarRef}>
         <Toolbar>
 
-          <Typography variant='h6' className={classes.title}>MML2</Typography>
+          <Typography variant='h6' className={classes.title}>Flux Logic</Typography>
 
           <PageChanger
             page={currentPage}
