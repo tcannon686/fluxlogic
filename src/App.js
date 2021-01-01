@@ -285,6 +285,12 @@ function App () {
     setCircuit(clone)
   }
 
+  const cut = () => {
+    copy()
+    deleteSelection()
+    closeContextMenu()
+  }
+
   return (
     <div
       className={classes.root}
@@ -475,6 +481,7 @@ function App () {
           contextMenuPos && { left: contextMenuPos[0], top: contextMenuPos[1] }
         }
       >
+        <MenuItem onClick={cut}>Cut</MenuItem>
         <MenuItem onClick={copy}>Copy</MenuItem>
         <MenuItem onClick={paste}>Paste</MenuItem>
         <MenuItem onClick={selectAll}>Select all</MenuItem>
