@@ -95,6 +95,7 @@ function PageChanger (props) {
   for (let i = 0; i <= props.pageCount; i++) {
     menuItems.push(
       <MenuItem
+        key={i}
         onClick={() => {
           props.onChangedPage(i)
           onClose()
