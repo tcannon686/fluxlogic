@@ -352,6 +352,7 @@ export default {
   receiver,
   led,
   buffer,
+  pin,
 
   /* Utils. */
   removeInvalidConnections,

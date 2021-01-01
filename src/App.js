@@ -72,7 +72,8 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0
   },
   drawerContent: {
-    width: drawerWidth
+    width: drawerWidth,
+    overflowX: 'hidden'
   },
   content: {
     flexGrow: 1,

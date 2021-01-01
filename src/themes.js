@@ -62,17 +62,20 @@ const defaultTheme = {
     /* Maps a pin ID to a position */
     const ret = {}
 
+    const calcY = (index, length) => 0.25 + (index - (length - 1) / 2) * 0.225 /
+        Math.max(length - 1, 1)
+
     gate.inputs.forEach((pin, index) => {
       ret[pin.id] = {
         x: x,
-        y: y + 0.25 + (index - (gate.inputs.length - 1) / 2) * 0.2
+        y: y + calcY(index, gate.inputs.length)
       }
     })
 
     gate.outputs.forEach((pin, index) => {
       ret[pin.id] = {
         x: x + 0.5,
-        y: y + 0.25
+        y: y + calcY(index, gate.outputs.length)
       }
     })
 
