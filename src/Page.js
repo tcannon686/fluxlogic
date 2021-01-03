@@ -442,6 +442,7 @@ const Page = React.forwardRef((props, ref) => {
           }
         }
 
+        document.activeElement.blur()
         e.preventDefault()
       }}
     >

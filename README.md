@@ -95,6 +95,33 @@ located above the Palette. Next, you should see a text field for 'label'.
 Modify this text, then click off of the text field, and you should see the label
 change for that set of senders and receivers.
 
+### Keyboard shortcuts
+
+Flux Logic also provides some keyboard shortcuts to make editing easier. Below
+is a list of keyboard shortcuts.
+
+| Key                                | Action                                  |
+| ---------------------------------- | --------------------------------------- |
+| <kbd>Control</kbd> + <kbd>A</kbd>  | Select all                              |
+| <kbd>Control</kbd> + <kbd>C</kbd>  | Copy                                    |
+| <kbd>Control</kbd> + <kbd>V</kbd>  | Paste                                   |
+| <kbd>Control</kbd> + <kbd>X</kbd>  | Cut                                     |
+| <kbd>Control</kbd> + <kbd>Z</kbd>  | Undo                                    |
+| <kbd>Control</kbd> + <kbd>Y</kbd>  | Redo                                    |
+| <kbd>Delete</kbd>                  | Delete selection                        |
+| <kbd>P</kbd>                       | Start/stop simulation                   |
+| <kbd>+</kbd>                       | Next page                               |
+| <kbd>-</kbd>                       | Previous page                           |
+| <kbd>1</kbd>                       | Page 1                                  |
+| <kbd>2</kbd>                       | Page 2                                  |
+| <kbd>3</kbd>                       | Page 3                                  |
+| <kbd>4</kbd>                       | Page 4                                  |
+| <kbd>5</kbd>                       | Page 5                                  |
+| <kbd>6</kbd>                       | Page 6                                  |
+| <kbd>7</kbd>                       | Page 7                                  |
+| <kbd>8</kbd>                       | Page 8                                  |
+| <kbd>9</kbd>                       | Page 9                                  |
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

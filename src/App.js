@@ -291,6 +291,54 @@ function App () {
     closeContextMenu()
   }
 
+  const changePage = (page) => {
+    if (page >= 0) {
+      setCurrentPage(page)
+      if (page >= pageCount) {
+        setPageCount(page + 1)
+      }
+    }
+  }
+
+  /* Attach key bindings to document body. */
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.target === document.body) {
+        const uppercase = e.key.toUpperCase()
+
+        if (e.getModifierState('Control')) {
+          if (uppercase === 'C') {
+            copy()
+          } else if (uppercase === 'V') {
+            paste()
+          } else if (uppercase === 'X') {
+            cut()
+          } else if (uppercase === 'A') {
+            selectAll()
+          } else if (uppercase === 'Z') {
+            undo()
+          } else if (uppercase === 'Y') {
+            redo()
+          }
+        } else if (e.key === 'Delete') {
+          deleteSelection()
+        } else if (uppercase === 'P') {
+          onPlayButtonClicked()
+        } else if (!isNaN(e.key)) {
+          changePage(Number(e.key) - 1)
+        } else if (e.key === '+') {
+          changePage(currentPage + 1)
+        } else if (e.key === '-') {
+          changePage(currentPage - 1)
+        }
+
+        e.preventDefault()
+      }
+    }
+    document.body.addEventListener('keydown', onKeyDown)
+    return () => document.body.removeEventListener('keydown', onKeyDown)
+  })
+
   return (
     <div
       className={classes.root}
@@ -360,12 +408,7 @@ function App () {
           <PageChanger
             page={currentPage}
             pageCount={pageCount}
-            onChangedPage={(page) => {
-              setCurrentPage(page)
-              if (page >= pageCount) {
-                setPageCount(page + 1)
-              }
-            }}
+            onChangedPage={changePage}
           />
 
           <ButtonGroup
