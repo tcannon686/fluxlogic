@@ -41,11 +41,11 @@ export default function Circuit (props) {
     return positions
   }, [selection, theme, moveAmount, gates])
 
-  const onGateClick = useRefCallback(props.onGateClick, [])
-  const onGateMouseDown = useRefCallback(props.onGateMouseDown, [])
+  const onGateClick = useRefCallback(props.onGateClick)
+  const onGateMouseDown = useRefCallback(props.onGateMouseDown)
 
-  const onPinMouseUp = useRefCallback(props.onPinMouseUp, [])
-  const onPinMouseDown = useRefCallback(props.onPinMouseDown, [])
+  const onPinMouseUp = useRefCallback(props.onPinMouseUp)
+  const onPinMouseDown = useRefCallback(props.onPinMouseDown)
 
   return (
     <>
