@@ -221,11 +221,14 @@ const Page = React.forwardRef((props, ref) => {
     /* Only update if the input pin has no connections. */
     let shouldUpdate = false
 
+    let inputGateId, outputGateId
+
     clone.gates = clone.gates.map((gate) => {
       let hasPin = false
       const inputs = gate.inputs.map((pin) => {
         const r = updatePin(pin)
         if (r !== pin) {
+          inputGateId = gate.id
           hasPin = true
         }
         return r
@@ -247,6 +250,7 @@ const Page = React.forwardRef((props, ref) => {
         const outputs = gate.outputs.map((pin) => {
           const r = updatePin(pin, true)
           if (r !== pin) {
+            outputGateId = gate.id
             hasPin = true
           }
           return r
@@ -260,7 +264,10 @@ const Page = React.forwardRef((props, ref) => {
         }
       })
 
-      onCircuitChanged(clone)
+      /* Only add the wire if the input and output are not on the same gate. */
+      if (inputGateId !== outputGateId) {
+        onCircuitChanged(clone)
+      }
     }
   }, [circuit, onCircuitChanged])
 
