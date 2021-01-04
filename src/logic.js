@@ -330,6 +330,26 @@ const removeInvalidConnections = (gates) => {
   })
 }
 
+/**
+ * Returns a list of all the labels that are used by 2 or more senders in the
+ * given list of gates, sorted alphabetically. This is useful as an error check
+ * to make sure there are no duplicate senders.
+ */
+const getDuplicateSenderLabels = (gates) => {
+  const senderCounts = {}
+
+  gates.forEach((gate) => {
+    if (gate.type === 'sender') {
+      senderCounts[gate.label] = (senderCounts[gate.label] || 0) + 1
+    }
+  })
+
+  return Object.entries(senderCounts)
+    .filter((x) => x[1] > 1)
+    .map((x) => x[0])
+    .sort()
+}
+
 export default {
   /* Simulation. */
   nextState,
@@ -357,5 +377,6 @@ export default {
   /* Utils. */
   removeInvalidConnections,
   getValidPins,
-  findSender
+  findSender,
+  getDuplicateSenderLabels
 }

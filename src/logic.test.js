@@ -448,3 +448,21 @@ test('removeInvalidConnections removes invalid connections', () => {
   expect(newGates[0].outputs[0].connections).toEqual([newGates[1].inputs[0].id])
   expect(newGates[1].inputs[0].connections).toEqual([newGates[0].outputs[0].id])
 })
+
+test('getDuplicateSenderLabels returns duplicate labels', () => {
+  const gates = [
+    logic.sender('A'),
+    logic.sender('B'),
+    logic.sender('C'),
+    logic.sender('C'),
+    logic.sender('F'),
+    logic.sender('D'),
+    logic.sender('E'),
+    logic.sender('D'),
+    logic.sender('F'),
+    logic.sender('X'),
+    logic.sender('Y')
+  ]
+
+  expect(logic.getDuplicateSenderLabels(gates)).toEqual(['C', 'D', 'F'])
+})

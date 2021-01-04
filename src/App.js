@@ -171,8 +171,8 @@ function App () {
 
   const simWorker = useRef(new SimWorker())
 
-  /* For opening and closing the upload error snackbar. */
-  const [openUploadError, setOpenUploadError] = useState(false)
+  /* For opening and closing the error snackbar. */
+  const [errorMessage, setErrorMessage] = useState(null)
 
   /* Refs used for calculating the center of the page. */
   const appBarRef = React.createRef()
@@ -209,7 +209,7 @@ function App () {
         setCurrentPage(page)
       })
       .catch((error) => {
-        setOpenUploadError(true)
+        setErrorMessage("Uh oh! We weren't able to load that file.")
         console.error(error)
       })
 
@@ -252,8 +252,17 @@ function App () {
 
   const onPlayButtonClicked = () => {
     if (!isPlaying) {
-      simWorker.current.startSimulation(circuit)
-      setIsPlaying(true)
+      /* Check for repeated senders. */
+      const duplicates = logic.getDuplicateSenderLabels(circuit.gates)
+
+      if (duplicates.length === 0) {
+        simWorker.current.startSimulation(circuit)
+        setIsPlaying(true)
+      } else {
+        setErrorMessage(
+          `Uh oh! Multiple senders for labels: ${duplicates.join(', ')}`
+        )
+      }
     } else {
       simWorker.current.stopSimulation()
       setIsPlaying(false)
@@ -510,10 +519,10 @@ function App () {
         </Container>
       </main>
       <Snackbar
-        open={openUploadError}
+        open={errorMessage !== null}
         autoHideDuration={10000}
-        onClose={() => { setOpenUploadError(false) }}
-        message="Uh oh! We weren't able to load that file."
+        onClose={() => { setErrorMessage(null) }}
+        message={errorMessage}
       />
       <Menu
         keepMounted
