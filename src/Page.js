@@ -175,16 +175,31 @@ const Page = React.forwardRef((props, ref) => {
 
   const onGateMouseDown = useCallback((e, gate) => {
     if (isEditable && e.button === 0) {
+      const isSelectionEmpty = Object.keys(selection).length === 0
+
       setMoveStart([e.clientX, e.clientY])
       setMoveEnd([e.clientX, e.clientY])
       setDidDrag(false)
-      if (selection[gate.id]) {
+
+      /* If no gates have been selected, select the gate. */
+      if (isSelectionEmpty) {
+        onSelectionChanged({ [gate.id]: true })
+      }
+
+      if (selection[gate.id] || isSelectionEmpty) {
         setIsDragging(true)
       }
       e.stopPropagation()
     }
     e.preventDefault()
-  }, [isEditable, selection, setMoveStart, setMoveEnd, setDidDrag])
+  }, [
+    isEditable,
+    selection,
+    setMoveStart,
+    setMoveEnd,
+    setDidDrag,
+    onSelectionChanged
+  ])
 
   const onMove = useCallback((moveAmount) => {
     const clone = { ...circuit }
