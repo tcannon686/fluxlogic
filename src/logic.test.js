@@ -338,6 +338,49 @@ test('receiver has same output as sender', () => {
   expect(logic.getOutputs(gates[2], state)).toEqual([true])
 })
 
+const createMuxTest = (n) => () => {
+  const gates = [logic.mux(n)]
+
+  /* Push inputs. */
+  for (let i = 0; i < n + (1 << n); i++) {
+    gates.push(logic.constantGate(false))
+  }
+
+  const circuit = logic.circuit(gates)
+
+  /* Connect select lines. */
+  for (let i = 0; i < n; i++) {
+    logic.connect(gates[i + 1].outputs[0], gates[0].inputs[i])
+  }
+
+  /* Connect data lines. */
+  for (let i = 0; i < (1 << n); i++) {
+    logic.connect(gates[n + i + 1].outputs[0], gates[0].inputs[n + i])
+  }
+
+  for (let select = 0; select < (1 << n); select++) {
+    for (let data = 0; data < (1 << (1 << n)); data++) {
+      /* Set select lines. */
+      for (let i = 0; i < n; i++) {
+        gates[i + 1].value = (select & (1 << i)) !== 0
+      }
+
+      /* Set data lines. */
+      for (let i = 0; i < (1 << n); i++) {
+        gates[i + 1 + n].value = (data & (1 << i)) !== 0
+      }
+
+      const state = logic.fastForward(circuit, 10)
+      expect(logic.getOutputs(gates[0], state))
+        .toEqual([(data & (1 << select)) !== 0])
+    }
+  }
+}
+
+test('simulates 2 to 1 mux', createMuxTest(1))
+test('simulates 4 to 1 mux', createMuxTest(2))
+test('simulates 8 to 1 mux', createMuxTest(3))
+
 test('can serialize state', () => {
   const gates = [
     logic.constantGate(false),

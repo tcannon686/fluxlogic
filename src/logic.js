@@ -15,7 +15,14 @@ const nextOutputFunctions = {
   receiver: (gate, state, circuit) => getInputs(
     findSender(gate, circuit),
     state
-  )
+  ),
+  mux: (gate, state) => {
+    const inputs = getInputs(gate, state)
+    const index = inputs
+      .slice(0, gate.n)
+      .reduce((t, c, i) => t + Number(c) * (1 << i))
+    return [inputs[gate.n + index]]
+  }
 }
 
 /** Connect to logic pins by a wire. */
@@ -138,6 +145,29 @@ function receiver (label) {
     type: 'receiver',
     label: label || 'A',
     inputs: Object.seal([]),
+    outputs: Object.seal([pin()])
+  }
+}
+
+/**
+ * Creates a multiplexor with the given number of select lines. The first n
+ * items in gate.inputs are the select lines (least significant bit first), the
+ * next n^2 are the data lines. The number of select lines, n, is stored in the
+ * n field of the returned object.
+ */
+function mux (n) {
+  const inputs = []
+  for (let i = 0; i < n; i++) {
+    inputs.push(pin())
+  }
+  for (let i = 0; i < (1 << n); i++) {
+    inputs.push(pin())
+  }
+  return {
+    id: nextId(),
+    type: 'mux',
+    n,
+    inputs: Object.seal(inputs),
     outputs: Object.seal([pin()])
   }
 }
@@ -373,6 +403,7 @@ export default {
   led,
   buffer,
   pin,
+  mux,
 
   /* Utils. */
   removeInvalidConnections,
