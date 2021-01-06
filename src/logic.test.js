@@ -381,6 +381,45 @@ test('simulates 2 to 1 mux', createMuxTest(1))
 test('simulates 4 to 1 mux', createMuxTest(2))
 test('simulates 8 to 1 mux', createMuxTest(3))
 
+const createDemuxTest = (n) => () => {
+  const gates = [logic.demux(n)]
+
+  /* Push inputs. */
+  for (let i = 0; i < n + 1; i++) {
+    gates.push(logic.constantGate(false))
+  }
+
+  const circuit = logic.circuit(gates)
+
+  /* Connect select lines. */
+  for (let i = 0; i <= n; i++) {
+    logic.connect(gates[i + 1].outputs[0], gates[0].inputs[i])
+  }
+
+  for (let select = 0; select < (1 << n); select++) {
+    for (let data = 0; data < 2; data++) {
+      /* Set select lines. */
+      for (let i = 0; i < n; i++) {
+        gates[i + 1].value = (select & (1 << i)) !== 0
+      }
+
+      /* Set data line. */
+      gates[n + 1].value = data === 1
+
+      const expectedOutput = new Array(1 << n)
+      expectedOutput.fill(false)
+      expectedOutput[select] = data === 1
+
+      const state = logic.fastForward(circuit, 10)
+      expect(logic.getOutputs(gates[0], state)).toEqual(expectedOutput)
+    }
+  }
+}
+
+test('simulates 1 to 2 demux', createDemuxTest(1))
+test('simulates 1 to 4 demux', createDemuxTest(2))
+test('simulates 1 to 8 demux', createDemuxTest(3))
+
 test('can serialize state', () => {
   const gates = [
     logic.constantGate(false),

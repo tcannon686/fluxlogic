@@ -20,8 +20,18 @@ const nextOutputFunctions = {
     const inputs = getInputs(gate, state)
     const index = inputs
       .slice(0, gate.n)
-      .reduce((t, c, i) => t + Number(c) * (1 << i))
+      .reduce((t, c, i) => t + Number(c) * (1 << i), 0)
     return [inputs[gate.n + index]]
+  },
+  demux: (gate, state) => {
+    const inputs = getInputs(gate, state)
+    const index = inputs
+      .slice(0, gate.n)
+      .reduce((t, c, i) => t + Number(c) * (1 << i), 0)
+    const outputs = new Array(1 << gate.n)
+    outputs.fill(false)
+    outputs[index] = inputs[gate.n]
+    return outputs
   }
 }
 
@@ -169,6 +179,30 @@ function mux (n) {
     n,
     inputs: Object.seal(inputs),
     outputs: Object.seal([pin()])
+  }
+}
+
+/**
+ * Creates a demultiplexor with the given number of select lines. The first n
+ * items in gates.inputs are the selectl ines (least significant bit first),
+ * followed by the data line. The number of select lines, n, is stored in the n
+ * field of the returned object. The returned gate has 2^n outputs.
+ */
+function demux (n) {
+  const inputs = [pin()]
+  const outputs = []
+  for (let i = 0; i < n; i++) {
+    inputs.push(pin())
+  }
+  for (let i = 0; i < (1 << n); i++) {
+    outputs.push(pin())
+  }
+  return {
+    id: nextId(),
+    type: 'demux',
+    n,
+    inputs: Object.seal(inputs),
+    outputs: Object.seal(outputs)
   }
 }
 
@@ -404,6 +438,7 @@ export default {
   buffer,
   pin,
   mux,
+  demux,
 
   /* Utils. */
   removeInvalidConnections,
