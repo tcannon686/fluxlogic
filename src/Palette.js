@@ -15,6 +15,7 @@ import SwitchOffSvg from './assets/switch-off.svg'
 import SenderSvg from './assets/sender.svg'
 import ReceiverSvg from './assets/receiver.svg'
 import MuxSvg from './assets/mux.svg'
+import DemuxSvg from './assets/demux.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
 
@@ -167,6 +168,16 @@ function Palette (props) {
         svg={MuxSvg}
         text='4 to 1 mux'
         onClick={() => props.onSelect(() => logic.mux(2))}
+      />
+      <PaletteItem
+        svg={DemuxSvg}
+        text='1 to 2 demux'
+        onClick={() => props.onSelect(() => logic.demux(1))}
+      />
+      <PaletteItem
+        svg={DemuxSvg}
+        text='1 to 4 demux'
+        onClick={() => props.onSelect(() => logic.demux(2))}
       />
     </Grid>
   )

@@ -23,6 +23,7 @@ import SwitchOnSvg from './assets/switch-on.svg'
 import SenderSvg from './assets/sender.svg'
 import ReceiverSvg from './assets/receiver.svg'
 import MuxSvg from './assets/mux.svg'
+import DemuxSvg from './assets/demux.svg'
 
 const defaultThemeSvgs = {
   and: () => AndGateSvg,
@@ -40,7 +41,8 @@ const defaultThemeSvgs = {
       : SwitchOffSvg,
   sender: () => SenderSvg,
   receiver: () => ReceiverSvg,
-  mux: () => MuxSvg
+  mux: () => MuxSvg,
+  demux: () => DemuxSvg
 }
 
 const defaultTheme = {
@@ -80,6 +82,24 @@ const defaultTheme = {
         ret[pin.id] = {
           x: x + 0.5,
           y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
+        }
+      })
+      return ret
+    } else if (gate.type === 'demux') {
+      const ret = {}
+      gate.inputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x,
+          y: y + 0.3 - calcY(
+            index + (index >= gate.n ? 1 : 0),
+            gate.inputs.length + 1) * 0.2
+        }
+      })
+
+      gate.outputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x + 0.5,
+          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.3
         }
       })
       return ret
