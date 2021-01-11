@@ -22,6 +22,7 @@ import SwitchOffSvg from './assets/switch-off.svg'
 import SwitchOnSvg from './assets/switch-on.svg'
 import SenderSvg from './assets/sender.svg'
 import ReceiverSvg from './assets/receiver.svg'
+import MuxSvg from './assets/mux.svg'
 
 const defaultThemeSvgs = {
   and: () => AndGateSvg,
@@ -38,7 +39,8 @@ const defaultThemeSvgs = {
       ? (logic.getUserInput(gate, state) ? SwitchOnSvg : SwitchOffSvg)
       : SwitchOffSvg,
   sender: () => SenderSvg,
-  receiver: () => ReceiverSvg
+  receiver: () => ReceiverSvg,
+  mux: () => MuxSvg
 }
 
 const defaultTheme = {
@@ -59,27 +61,47 @@ const defaultTheme = {
 
   /* Returns an object mapping a pin ID to a pin position. */
   getPinPositions (gate, x, y, state) {
-    /* Maps a pin ID to a position */
-    const ret = {}
-
-    const calcY = (index, length) => 0.25 + (index - (length - 1) / 2) * 0.225 /
+    const calcY = (index, length) => (index - (length - 1) / 2) /
         Math.max(length - 1, 1)
 
-    gate.inputs.forEach((pin, index) => {
-      ret[pin.id] = {
-        x: x,
-        y: y + calcY(index, gate.inputs.length)
-      }
-    })
+    /* Maps a pin ID to a position */
+    if (gate.type === 'mux') {
+      const ret = {}
+      gate.inputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x,
+          y: y + 0.25 - calcY(
+            index + (index >= gate.n ? 1 : 0),
+            gate.inputs.length + 1) * 0.3
+        }
+      })
 
-    gate.outputs.forEach((pin, index) => {
-      ret[pin.id] = {
-        x: x + 0.5,
-        y: y + calcY(index, gate.outputs.length)
-      }
-    })
+      gate.outputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x + 0.5,
+          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
+        }
+      })
+      return ret
+    } else {
+      const ret = {}
 
-    return ret
+      gate.inputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x,
+          y: y + 0.25 - calcY(index, gate.inputs.length) * 0.225
+        }
+      })
+
+      gate.outputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x + 0.5,
+          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
+        }
+      })
+
+      return ret
+    }
   },
 
   getWidth (gate, state) {

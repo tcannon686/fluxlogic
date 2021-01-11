@@ -45,7 +45,7 @@ function PinProperties (props) {
           />
         </Tooltip>
       </ListItemIcon>
-      <ListItemText> Pin {props.index + 1} </ListItemText>
+      <ListItemText> {props.label || `Pin ${props.index + 1}`} </ListItemText>
       {
         props.deletable && (
           <Button
@@ -183,6 +183,11 @@ export default function Inspector (props) {
       </Typography>
     )
   } else {
+    const isLogicGate = (
+      gate.type === 'and' ||
+      gate.type === 'or' ||
+      gate.type === 'xor')
+
     const gateProps = (
       <>
         <Typography variant='h5'>Inputs</Typography>
@@ -193,14 +198,18 @@ export default function Inspector (props) {
                 key={i}
                 index={i}
                 pin={pin}
+                label={
+                  gate.type === 'mux' &&
+                    (i < gate.n ? `Select ${i + 1}` : `Data ${i - gate.n + 1}`)
+                }
                 onChange={(newPin) => updatePin(i, newPin, false)}
                 onPinDeleted={() => deletePin(i, false)}
-                deletable={gate.inputs.length > 2}
+                deletable={gate.inputs.length > 2 && isLogicGate}
               />
             )
           }
           {
-            (gate.type === 'and' || gate.type === 'or' || gate.type === 'xor') &&
+            isLogicGate &&
         (gate.inputs.length < 4) &&
         (
           <ListItem>

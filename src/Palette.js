@@ -14,6 +14,7 @@ import BufferGateSvg from './assets/buffer-gate.svg'
 import SwitchOffSvg from './assets/switch-off.svg'
 import SenderSvg from './assets/sender.svg'
 import ReceiverSvg from './assets/receiver.svg'
+import MuxSvg from './assets/mux.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
 
@@ -156,6 +157,16 @@ function Palette (props) {
         svg={ReceiverSvg}
         text='receiver'
         onClick={() => props.onSelect(logic.receiver)}
+      />
+      <PaletteItem
+        svg={MuxSvg}
+        text='2 to 1 mux'
+        onClick={() => props.onSelect(() => logic.mux(1))}
+      />
+      <PaletteItem
+        svg={MuxSvg}
+        text='4 to 1 mux'
+        onClick={() => props.onSelect(() => logic.mux(2))}
       />
     </Grid>
   )
