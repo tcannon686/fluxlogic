@@ -310,6 +310,7 @@ function App () {
       if (e.target === document.body) {
         const uppercase = e.key.toUpperCase()
 
+        let isValidShortcut = true
         if (e.getModifierState('Control')) {
           if (uppercase === 'C') {
             copy()
@@ -323,6 +324,8 @@ function App () {
             undo()
           } else if (uppercase === 'Y') {
             redo()
+          } else {
+            isValidShortcut = false
           }
         } else if (e.key === 'Delete') {
           deleteSelection()
@@ -334,9 +337,13 @@ function App () {
           changePage(currentPage + 1)
         } else if (e.key === '-') {
           changePage(currentPage - 1)
+        } else {
+          isValidShortcut = false
         }
 
-        e.preventDefault()
+        if (isValidShortcut) {
+          e.preventDefault()
+        }
       }
     }
     document.body.addEventListener('keydown', onKeyDown)
