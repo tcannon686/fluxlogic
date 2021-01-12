@@ -3,14 +3,13 @@
  */
 
 /*
- * Converts the given data to JSON, and prompts the user to save the file as the
- * given filename.
+ * Prompts the user to save the given text as the given filename.
  */
-export const download = (filename, data) => {
+export const download = (filename, text) => {
   var element = document.createElement('a')
   element.setAttribute(
     'href',
-    `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`)
+    `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)
   element.setAttribute('download', filename)
 
   element.style.display = 'none'
@@ -23,7 +22,7 @@ export const download = (filename, data) => {
 
 /*
  * Prompts the user to upload a file. Returns a promise that resolves to the
- * parsed JSON.
+ * text loaded from the file.
  */
 export const upload = () => {
   return new Promise((resolve, reject) => {
@@ -37,7 +36,6 @@ export const upload = () => {
       'change',
       function () {
         this.files[0].text()
-          .then(JSON.parse)
           .then((data) => resolve(data))
           .catch((error) => reject(error))
       },

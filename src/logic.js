@@ -1,3 +1,5 @@
+import packageJson from '../package.json'
+
 /*
  * An object mapping gate types to functions.
  */
@@ -414,6 +416,27 @@ const getDuplicateSenderLabels = (gates) => {
     .sort()
 }
 
+/**
+ * Stores the project in a string. The project can be loaded using the
+ * loadProject function.
+ */
+const dumpProject = (circuit, currentPage) => {
+  return JSON.stringify({
+    version: packageJson.version,
+    circuit,
+    currentPage
+  })
+}
+
+/**
+ * Loads the project from a string. Returns an object with the circuit in the
+ * circuit field, the current page in the currentPage field, and the Flux Logic
+ * version in the version field.
+ */
+const loadProject = (data) => {
+  return JSON.parse(data)
+}
+
 export default {
   /* Simulation. */
   nextState,
@@ -444,5 +467,9 @@ export default {
   removeInvalidConnections,
   getValidPins,
   findSender,
-  getDuplicateSenderLabels
+  getDuplicateSenderLabels,
+
+  /* Saving and loading. */
+  loadProject,
+  dumpProject
 }

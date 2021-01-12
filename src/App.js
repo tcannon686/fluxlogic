@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-import packageJson from '../package.json'
-
 /* Material UI components. */
 import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
@@ -183,15 +181,12 @@ function App () {
   const closeContextMenu = () => setContextMenuPos(null)
 
   const downloadProject = () => {
-    download('circuit.json', {
-      version: packageJson.version,
-      circuit,
-      currentPage
-    })
+    download('circuit.json', logic.dumpProject(circuit, currentPage))
   }
 
   const uploadProject = () =>
     upload()
+      .then(logic.loadProject)
       .then((data) => {
         setCircuit(logic.renumber(data.circuit))
 
