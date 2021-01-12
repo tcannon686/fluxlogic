@@ -37,7 +37,7 @@ import Palette from './Palette'
 import Inspector from './Inspector'
 
 /* Logic components. */
-import logic from './logic'
+import * as logic from './logic'
 import { defaultTheme } from './themes'
 
 import { upload, download } from './utils'

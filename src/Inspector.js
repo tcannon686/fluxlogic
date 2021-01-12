@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 
-import logic from './logic'
+import * as logic from './logic'
 
 /* Icons. */
 import DeleteIcon from '@material-ui/icons/Delete'

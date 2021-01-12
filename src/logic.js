@@ -437,7 +437,7 @@ const loadProject = (data) => {
   return JSON.parse(data)
 }
 
-export default {
+export {
   /* Simulation. */
   nextState,
   getOutputs,

@@ -21,7 +21,7 @@ import PinInvertedSvg from './assets/pin-inverted.svg'
 
 import Wire from './Wire'
 
-import logic from './logic'
+import * as logic from './logic'
 
 function PaletteItem (props) {
   return (

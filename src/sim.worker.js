@@ -1,4 +1,4 @@
-import logic from './logic'
+import * as logic from './logic'
 
 let state = null
 let callback = null

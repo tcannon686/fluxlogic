@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 
-import logic from './logic'
+import * as logic from './logic'
 
 import Wire from './Wire'
 import Circuit from './Circuit'

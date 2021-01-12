@@ -3,7 +3,7 @@
  * as well as the position of the pins.
  */
 
-import logic from './logic'
+import * as logic from './logic'
 
 /* SVGs */
 import AndGateSvg from './assets/and-gate.svg'

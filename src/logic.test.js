@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import logic from './logic'
+import * as logic from './logic'
 
 test('simulates constant gate', () => {
   const gate = logic.constantGate(true)

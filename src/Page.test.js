@@ -3,7 +3,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import Page from './Page'
-import logic from './logic'
+import * as logic from './logic'
 import { defaultTheme } from './themes'
 
 test('renders logic components', () => {
