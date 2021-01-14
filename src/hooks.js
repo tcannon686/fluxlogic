@@ -25,30 +25,29 @@ export const useUndoable = (state, max) => {
   const [past, setPast] = useState([])
   const [future, setFuture] = useState([])
 
-  const canUndo = past.length > 0
-  const canRedo = future.length > 0
-
-  const undo = () => {
+  const undo = useCallback(() => {
+    const canUndo = past.length > 0
     if (canUndo) {
       setFuture([present, ...future])
       setPresent(past[0])
       setPast(past.slice(1))
     }
-  }
+  }, [present, past, future, setPresent, setPast, setFuture])
 
-  const redo = () => {
+  const redo = useCallback(() => {
+    const canRedo = future.length > 0
     if (canRedo) {
       setPast([present, ...past])
       setPresent(future[0])
       setFuture(future.slice(1))
     }
-  }
+  }, [present, past, future, setPresent, setPast, setFuture])
 
-  const setState = (state) => {
+  const setState = useCallback((state) => {
     setPast([present, ...past].splice(-(max || 1000)))
     setPresent(state)
     setFuture([])
-  }
+  }, [present, past, setPresent, setPast, setFuture, max])
 
   return [present, setState, undo, redo]
 }

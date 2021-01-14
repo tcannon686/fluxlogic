@@ -85,7 +85,7 @@ function PaletteItem (props) {
  *           A callback called when the user selects an item. The factory
  *           parameter is a function that constructs a new logic gate.
  */
-function Palette (props) {
+const Palette = React.memo((props) => {
   const invert = (gate) => {
     gate.outputs[0].isInverted = true
     return gate
@@ -187,6 +187,6 @@ function Palette (props) {
       />
     </Grid>
   )
-}
+})
 
 export default Palette

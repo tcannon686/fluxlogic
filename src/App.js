@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 /* Material UI components. */
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -173,8 +173,8 @@ function App () {
   const [errorMessage, setErrorMessage] = useState(null)
 
   /* Refs used for calculating the center of the page. */
-  const appBarRef = React.createRef()
-  const pageRef = React.createRef()
+  const appBarRef = useRef()
+  const pageRef = useRef()
 
   const classes = useStyles()
 
@@ -244,6 +244,31 @@ function App () {
     }
     closeContextMenu()
   }
+
+  const onPaletteSelect = useCallback((factory) => {
+    /* Clone the circuit. */
+    const clone = { ...circuit }
+    clone.gates = [...clone.gates]
+
+    /* Place the gate. */
+    const gate = factory()
+    clone.gates.push(gate)
+
+    /* Calculate the gate position. */
+    const appBarRect = appBarRef.current.getBoundingClientRect()
+    const pageRect = pageRef.current.getBoundingClientRect()
+
+    gate.x = ((appBarRect.width + drawerWidth) / 2 -
+      pageRect.left) / 96
+    gate.y = (
+      (window.innerHeight + appBarRect.height) / 2 -
+      pageRect.top) / 96
+
+    gate.page = currentPage
+
+    /* Update with the new circuit. */
+    setCircuit(clone)
+  }, [appBarRef, pageRef, circuit, currentPage, setCircuit])
 
   const onPlayButtonClicked = () => {
     if (!isPlaying) {
@@ -375,30 +400,7 @@ function App () {
           </Tabs>
           <TabPanel value={tab} index={0}>
             <Palette
-              onSelect={(factory) => {
-                /* Clone the circuit. */
-                const clone = { ...circuit }
-                clone.gates = [...clone.gates]
-
-                /* Place the gate. */
-                const gate = factory()
-                clone.gates.push(gate)
-
-                /* Calculate the gate position. */
-                const appBarRect = appBarRef.current.getBoundingClientRect()
-                const pageRect = pageRef.current.getBoundingClientRect()
-
-                gate.x = ((appBarRect.width + drawerWidth) / 2 -
-                  pageRect.left) / 96
-                gate.y = (
-                  (window.innerHeight + appBarRect.height) / 2 -
-                  pageRect.top) / 96
-
-                gate.page = currentPage
-
-                /* Update with the new circuit. */
-                setCircuit(clone)
-              }}
+              onSelect={onPaletteSelect}
             />
           </TabPanel>
           <TabPanel value={tab} index={1}>
