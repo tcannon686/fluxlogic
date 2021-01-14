@@ -25,6 +25,43 @@ import ReceiverSvg from './assets/receiver.svg'
 import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
 
+import SevenSegmentSvg from './assets/seven-segment.svg'
+import SevenSegment0Svg from './assets/seven-segment-0.svg'
+import SevenSegment1Svg from './assets/seven-segment-1.svg'
+import SevenSegment2Svg from './assets/seven-segment-2.svg'
+import SevenSegment3Svg from './assets/seven-segment-3.svg'
+import SevenSegment4Svg from './assets/seven-segment-4.svg'
+import SevenSegment5Svg from './assets/seven-segment-5.svg'
+import SevenSegment6Svg from './assets/seven-segment-6.svg'
+import SevenSegment7Svg from './assets/seven-segment-7.svg'
+import SevenSegment8Svg from './assets/seven-segment-8.svg'
+import SevenSegment9Svg from './assets/seven-segment-9.svg'
+import SevenSegment10Svg from './assets/seven-segment-10.svg'
+import SevenSegment11Svg from './assets/seven-segment-11.svg'
+import SevenSegment12Svg from './assets/seven-segment-12.svg'
+import SevenSegment13Svg from './assets/seven-segment-13.svg'
+import SevenSegment14Svg from './assets/seven-segment-14.svg'
+import SevenSegment15Svg from './assets/seven-segment-15.svg'
+
+const sevenSegmentSvgs = [
+  SevenSegment0Svg,
+  SevenSegment1Svg,
+  SevenSegment2Svg,
+  SevenSegment3Svg,
+  SevenSegment4Svg,
+  SevenSegment5Svg,
+  SevenSegment6Svg,
+  SevenSegment7Svg,
+  SevenSegment8Svg,
+  SevenSegment9Svg,
+  SevenSegment10Svg,
+  SevenSegment11Svg,
+  SevenSegment12Svg,
+  SevenSegment13Svg,
+  SevenSegment14Svg,
+  SevenSegment15Svg
+]
+
 const defaultThemeSvgs = {
   and: () => AndGateSvg,
   or: () => OrGateSvg,
@@ -42,7 +79,14 @@ const defaultThemeSvgs = {
   sender: () => SenderSvg,
   receiver: () => ReceiverSvg,
   mux: () => MuxSvg,
-  demux: () => DemuxSvg
+  demux: () => DemuxSvg,
+  sevenSegment: (gate, state) => (
+    state
+      ? sevenSegmentSvgs[
+        logic.getInputs(gate, state).reduce((a, c, i) => a + Number(c) * (1 << i))
+      ]
+      : SevenSegmentSvg
+  )
 }
 
 const defaultTheme = {

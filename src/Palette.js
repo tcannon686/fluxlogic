@@ -16,6 +16,7 @@ import SenderSvg from './assets/sender.svg'
 import ReceiverSvg from './assets/receiver.svg'
 import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
+import SevenSegmentSvg from './assets/seven-segment.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
 
@@ -178,6 +179,11 @@ function Palette (props) {
         svg={DemuxSvg}
         text='1 to 4 demux'
         onClick={() => props.onSelect(() => logic.demux(2))}
+      />
+      <PaletteItem
+        svg={SevenSegmentSvg}
+        text='7-segment display'
+        onClick={() => props.onSelect(logic.sevenSegment)}
       />
     </Grid>
   )

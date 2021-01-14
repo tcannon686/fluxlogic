@@ -34,7 +34,8 @@ const nextOutputFunctions = {
     outputs.fill(false)
     outputs[index] = inputs[gate.n]
     return outputs
-  }
+  },
+  sevenSegment: () => []
 }
 
 /** Connect to logic pins by a wire. */
@@ -205,6 +206,20 @@ function demux (n) {
     n,
     inputs: Object.seal(inputs),
     outputs: Object.seal(outputs)
+  }
+}
+
+function sevenSegment (n) {
+  return {
+    id: nextId(),
+    type: 'sevenSegment',
+    inputs: Object.seal([
+      pin(),
+      pin(),
+      pin(),
+      pin()
+    ]),
+    outputs: Object.seal([])
   }
 }
 
@@ -462,6 +477,7 @@ export {
   pin,
   mux,
   demux,
+  sevenSegment,
 
   /* Utils. */
   removeInvalidConnections,
