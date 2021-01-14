@@ -95,6 +95,17 @@ located above the Palette. Next, you should see a text field for 'label'.
 Modify this text, then click off of the text field, and you should see the label
 change for that set of senders and receivers.
 
+### Using the inspector
+The inspector, or properties window, is available in the 'properties' tab
+located next to the palette. From the inspector, you can be more specific in
+modifying the attributes of the selected objects. You can specify the exact X
+and Y coordinates of the gates on the page; add, remove, or invert pins; and
+more. One useful tool available from the inspector is the ability to align logic
+gates on the X and Y axis. To do so, select the objects you want to align. You
+will then see the 'Align X' and 'Align Y' buttons in the properties menu.
+Clicking each button will align the logic gates to the displayed X and Y
+positions.
+
 ### Keyboard shortcuts
 
 Flux Logic also provides some keyboard shortcuts to make editing easier. Below

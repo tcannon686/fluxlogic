@@ -9,6 +9,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Checkbox from '@material-ui/core/Checkbox'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -176,6 +177,24 @@ export default function Inspector (props) {
     props.onCircuitChanged(clone)
   }
 
+  const alignX = () => {
+    const clone = { ...circuit }
+    clone.gates = circuit.gates.map((gate) =>
+      selection[gate.id]
+        ? { ...gate, x: minX }
+        : gate)
+    props.onCircuitChanged(clone)
+  }
+
+  const alignY = () => {
+    const clone = { ...circuit }
+    clone.gates = circuit.gates.map((gate) =>
+      selection[gate.id]
+        ? { ...gate, y: minY }
+        : gate)
+    props.onCircuitChanged(clone)
+  }
+
   if (selectedGates.length === 0) {
     return (
       <Typography variant='body1'>
@@ -214,7 +233,6 @@ export default function Inspector (props) {
         (
           <ListItem>
             <Button
-              variant='contained'
               fullWidth
               onClick={() => addPin(false)}
             >
@@ -244,7 +262,9 @@ export default function Inspector (props) {
 
     return (
       <form className={classes.form} noValidate>
+        <Typography variant='h5'>Position</Typography>
         <TextField
+          fullWidth
           label='X'
           variant='filled'
           value={x}
@@ -260,6 +280,7 @@ export default function Inspector (props) {
         />
 
         <TextField
+          fullWidth
           label='Y'
           variant='filled'
           onChange={(e) => setY(e.target.value)}
@@ -274,7 +295,24 @@ export default function Inspector (props) {
           }}
         />
 
+        {
+          selectedGates.length > 1 && (
+            <ButtonGroup
+              fullWidth
+            >
+              <Button onClick={alignX}>
+                Align X
+              </Button>
+              <Button onClick={alignY}>
+                Align Y
+              </Button>
+            </ButtonGroup>
+          )
+        }
+
+        <Typography variant='h5'>Label</Typography>
         <TextField
+          fullWidth
           label='Label'
           variant='filled'
           value={label}
