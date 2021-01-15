@@ -513,6 +513,45 @@ test('simulates D-latch', () => {
   expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
 })
 
+test('simulates D-flip-flop', () => {
+  const gates = [
+    logic.constantGate(false),
+    logic.constantGate(false),
+    logic.dFlipFlop()
+  ]
+
+  const circuit = logic.circuit(gates)
+  logic.connect(gates[0].outputs[0], gates[2].inputs[0])
+  logic.connect(gates[1].outputs[0], gates[2].inputs[1])
+
+  let state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
+
+  /* Set D to 1. */
+  gates[1].value = true
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
+
+  /* Trigger rising edge. */
+  gates[0].value = true
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[2], state)).toEqual([false, true])
+
+  /* Set D to 0. */
+  gates[1].value = false
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[2], state)).toEqual([false, true])
+
+  gates[0].value = false
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[2], state)).toEqual([false, true])
+
+  /* Trigger rising edge. */
+  gates[0].value = true
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
+})
+
 test('simulates SR-D-flip-flop', () => {
   const gates = [
     logic.constantGate(false),

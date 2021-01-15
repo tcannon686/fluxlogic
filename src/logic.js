@@ -68,6 +68,24 @@ const nextOutputFunctions = {
       return [!q, q]
     }
   },
+  dFlipFlop: (gate, state) => {
+    const inputs = getInputs(gate, state)
+    const outputs = getOutputs(gate, state)
+
+    const cPrev = state.prevState && getInputs(gate, state.prevState)[0]
+    const c = inputs[0]
+    const d = inputs[1]
+
+    const q = outputs[1]
+
+    const isRisingEdge = cPrev !== c && c === true
+
+    if (isRisingEdge) {
+      return [!d, d]
+    } else {
+      return [!q, q]
+    }
+  },
   srDFlipFlop: (gate, state) => {
     const inputs = getInputs(gate, state)
     const outputs = getOutputs(gate, state)
@@ -313,6 +331,24 @@ function dLatch () {
   return {
     id: nextId(),
     type: 'dLatch',
+    inputs: Object.seal([
+      pin(),
+      pin()
+    ]),
+    outputs: Object.seal([
+      pin(),
+      pin()
+    ])
+  }
+}
+
+/**
+ * Creates a D-flip-flop, where inputs[0] is C, inputs[1] is D.
+ */
+function dFlipFlop () {
+  return {
+    id: nextId(),
+    type: 'dFlipFlop',
     inputs: Object.seal([
       pin(),
       pin()
@@ -616,6 +652,7 @@ export {
   srLatch,
   dLatch,
   srDFlipFlop,
+  dFlipFlop,
 
   /* Utils. */
   removeInvalidConnections,
