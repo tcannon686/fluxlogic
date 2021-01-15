@@ -35,7 +35,25 @@ const nextOutputFunctions = {
     outputs[index] = inputs[gate.n]
     return outputs
   },
-  sevenSegment: () => []
+  sevenSegment: () => [],
+  srLatch: (gate, state) => {
+    const inputs = getInputs(gate, state)
+    const outputs = getOutputs(gate, state)
+
+    const s = inputs[2]
+    const e = inputs[1]
+    const r = inputs[0]
+
+    const q = outputs[1]
+
+    if (e && s && !r) {
+      return [false, true]
+    } else if (e && !s && r) {
+      return [true, false]
+    } else {
+      return [!q, q]
+    }
+  }
 }
 
 /** Connect to logic pins by a wire. */
@@ -220,6 +238,26 @@ function sevenSegment (n) {
       pin()
     ]),
     outputs: Object.seal([])
+  }
+}
+
+/**
+ * Creates a gated SR-latch component, where inputs[0] is R, inputs[1] is E,
+ * inputs[2] is S, outputs[0] is !Q, outputs[1] is Q.
+ */
+function srLatch () {
+  return {
+    id: nextId(),
+    type: 'srLatch',
+    inputs: Object.seal([
+      pin(),
+      pin(),
+      pin()
+    ]),
+    outputs: Object.seal([
+      pin(),
+      pin()
+    ])
   }
 }
 
@@ -478,6 +516,7 @@ export {
   mux,
   demux,
   sevenSegment,
+  srLatch,
 
   /* Utils. */
   removeInvalidConnections,

@@ -213,7 +213,7 @@ test('simulates !!(!a and !b) or c', () => {
   }
 })
 
-test('simulates SR-latch', () => {
+test('simulates NOR SR-latch', () => {
   const gates = [
     logic.constantGate(false), /* Set */
     logic.constantGate(false), /* Reset */
@@ -419,6 +419,61 @@ const createDemuxTest = (n) => () => {
 test('simulates 1 to 2 demux', createDemuxTest(1))
 test('simulates 1 to 4 demux', createDemuxTest(2))
 test('simulates 1 to 8 demux', createDemuxTest(3))
+
+test('simulates SR-latch', () => {
+  const gates = [
+    logic.constantGate(true),
+    logic.constantGate(true),
+    logic.constantGate(false),
+    logic.srLatch()
+  ]
+
+  const circuit = logic.circuit(gates)
+  logic.connect(gates[0].outputs[0], gates[3].inputs[0])
+  logic.connect(gates[1].outputs[0], gates[3].inputs[1])
+  logic.connect(gates[2].outputs[0], gates[3].inputs[2])
+
+  let state = logic.nextState(circuit)
+  gates[0].value = true
+
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([true, false])
+
+  gates[0].value = false
+
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([true, false])
+
+  gates[2].value = true
+
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
+
+  gates[2].value = false
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
+
+  /* Disable the enable bit. */
+  gates[1].value = false
+
+  gates[0].value = true
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
+
+  gates[0].value = false
+
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
+
+  gates[2].value = true
+
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
+
+  gates[2].value = false
+  state = logic.fastForward(circuit, 10, state)
+  expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
+})
 
 test('can serialize state', () => {
   const gates = [
