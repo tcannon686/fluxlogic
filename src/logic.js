@@ -53,6 +53,20 @@ const nextOutputFunctions = {
     } else {
       return [!q, q]
     }
+  },
+  dLatch: (gate, state) => {
+    const inputs = getInputs(gate, state)
+    const outputs = getOutputs(gate, state)
+
+    const d = inputs[1]
+    const e = inputs[0]
+
+    const q = outputs[1]
+    if (e) {
+      return [!d, d]
+    } else {
+      return [!q, q]
+    }
   }
 }
 
@@ -251,6 +265,25 @@ function srLatch () {
     type: 'srLatch',
     inputs: Object.seal([
       pin(),
+      pin(),
+      pin()
+    ]),
+    outputs: Object.seal([
+      pin(),
+      pin()
+    ])
+  }
+}
+
+/**
+ * Creates a D-latch, where inputs[0] is E, inputs[1] is D, outputs[0] is !Q,
+ * outputs[1] is Q.
+ */
+function dLatch () {
+  return {
+    id: nextId(),
+    type: 'dLatch',
+    inputs: Object.seal([
       pin(),
       pin()
     ]),
@@ -517,6 +550,7 @@ export {
   demux,
   sevenSegment,
   srLatch,
+  dLatch,
 
   /* Utils. */
   removeInvalidConnections,

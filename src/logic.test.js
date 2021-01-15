@@ -475,6 +475,44 @@ test('simulates SR-latch', () => {
   expect(logic.getOutputs(gates[3], state)).toEqual([false, true])
 })
 
+test('simulates D-latch', () => {
+  const gates = [
+    logic.constantGate(false),
+    logic.constantGate(false),
+    logic.dLatch()
+  ]
+
+  const circuit = logic.circuit(gates)
+  logic.connect(gates[0].outputs[0], gates[2].inputs[0])
+  logic.connect(gates[1].outputs[0], gates[2].inputs[1])
+
+  let state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
+
+  gates[1].value = true
+  state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
+
+  /* Enable D-latch. */
+  gates[0].value = true
+
+  gates[1].value = true
+  state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[2], state)).toEqual([false, true])
+
+  /* Disable D-latch. */
+  gates[0].value = true
+  state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[2], state)).toEqual([false, true])
+
+  /* Enable D-latch. */
+  gates[0].value = true
+
+  gates[1].value = false
+  state = logic.fastForward(circuit, 10)
+  expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
+})
+
 test('can serialize state', () => {
   const gates = [
     logic.constantGate(false),
