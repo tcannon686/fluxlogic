@@ -121,8 +121,8 @@ const LogicGate = React.memo((props) => {
             key={`${pin.id}-`}
             x0={pinPositions[pin.id].x - x}
             y0={pinPositions[pin.id].y - y}
-            x1={pinPositions[pin.id].x - x - 0.25}
-            y1={pinPositions[pin.id].y - y}
+            x1={(pinPositions[pin.id].x1 || pinPositions[pin.id].x - 0.25) - x}
+            y1={(pinPositions[pin.id].y1 || pinPositions[pin.id].y) - y}
           />)
       }
 
@@ -133,8 +133,8 @@ const LogicGate = React.memo((props) => {
             key={`${pin.id}-`}
             x0={pinPositions[pin.id].x - x}
             y0={pinPositions[pin.id].y - y}
-            x1={pinPositions[pin.id].x - x + 0.25}
-            y1={pinPositions[pin.id].y - y}
+            x1={(pinPositions[pin.id].x1 || pinPositions[pin.id].x + 0.25) - x}
+            y1={(pinPositions[pin.id].y1 || pinPositions[pin.id].y) - y}
           />)
       }
 

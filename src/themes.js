@@ -26,6 +26,7 @@ import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
 import SrLatchSvg from './assets/sr-latch.svg'
 import DLatchSvg from './assets/d-latch.svg'
+import DFlipFlopSvg from './assets/d-flip-flop.svg'
 
 import SevenSegmentSvg from './assets/seven-segment.svg'
 import SevenSegment0Svg from './assets/seven-segment-0.svg'
@@ -90,7 +91,8 @@ const defaultThemeSvgs = {
       : SevenSegmentSvg
   ),
   srLatch: () => SrLatchSvg,
-  dLatch: () => DLatchSvg
+  dLatch: () => DLatchSvg,
+  dFlipFlop: () => DFlipFlopSvg
 }
 
 const defaultTheme = {
@@ -109,7 +111,12 @@ const defaultTheme = {
     return defaultThemeSvgs[gate.type](gate, state)
   },
 
-  /* Returns an object mapping a pin ID to a pin position. */
+  /*
+   * Returns an object mapping a pin ID to a pin position. Each key maps a pin
+   * ID to an object with an x and y field. The object may also have a x1 and y1
+   * field, which represents where the wire connecting the pin to the gate
+   * should go.
+   */
   getPinPositions (gate, x, y, state) {
     const calcY = (index, length) => (index - (length - 1) / 2) /
         Math.max(length - 1, 1)
@@ -150,6 +157,45 @@ const defaultTheme = {
           y: y + 0.25 - calcY(index, gate.outputs.length) * 0.3
         }
       })
+      return ret
+    } else if (gate.type === 'dFlipFlop') {
+      const ret = {}
+      const r = gate.inputs[0]
+      const c = gate.inputs[1]
+      const d = gate.inputs[2]
+      const s = gate.inputs[3]
+
+      const f = (pin, index) => {
+        ret[pin.id] = {
+          x: x,
+          y: y + 0.25 - calcY(index, 2) * 0.225
+        }
+      }
+
+      f(c, 0)
+      f(d, 1)
+
+      ret[s.id] = {
+        x: x + 0.25,
+        y: y - 0.05,
+        x1: x + 0.25,
+        y1: y
+      }
+
+      ret[r.id] = {
+        x: x + 0.25,
+        y: y + 0.55,
+        x1: x + 0.25,
+        y1: y
+      }
+
+      gate.outputs.forEach((pin, index) => {
+        ret[pin.id] = {
+          x: x + 0.5,
+          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
+        }
+      })
+
       return ret
     } else {
       const ret = {}
