@@ -100,11 +100,20 @@ The inspector, or properties window, is available in the 'properties' tab
 located next to the palette. From the inspector, you can be more specific in
 modifying the attributes of the selected objects. You can specify the exact X
 and Y coordinates of the gates on the page; add, remove, or invert pins; and
-more. One useful tool available from the inspector is the ability to align logic
-gates on the X and Y axis. To do so, select the objects you want to align. You
+more.
+
+#### Aligning objects
+One useful tool available from the inspector is the ability to align logic
+gates on the X and Y axes. To do so, select the objects you want to align. You
 will then see the 'Align X' and 'Align Y' buttons in the properties menu.
 Clicking each button will align the logic gates to the displayed X and Y
 positions.
+
+#### Distributing objects
+Another useful tool in the inspector is the ability to distribute logic
+gates. Clicking the 'Distribute X' and 'Distribute Y' buttons in the inspector
+will take the selected gate and distribute them so that they are evenly
+spaced from the first gate.
 
 ### Keyboard shortcuts
 

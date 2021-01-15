@@ -195,6 +195,26 @@ export default function Inspector (props) {
     props.onCircuitChanged(clone)
   }
 
+  const distributeX = () => {
+    const clone = { ...circuit }
+    const order = [...selectedGates].sort((a, b) => a.x - b.x)
+    clone.gates = circuit.gates.map((gate) =>
+      selection[gate.id]
+        ? { ...gate, x: order.indexOf(gate) * 0.75 + minX }
+        : gate)
+    props.onCircuitChanged(clone)
+  }
+
+  const distributeY = () => {
+    const clone = { ...circuit }
+    const order = [...selectedGates].sort((a, b) => a.y - b.y)
+    clone.gates = circuit.gates.map((gate) =>
+      selection[gate.id]
+        ? { ...gate, y: order.indexOf(gate) * 0.5 + minY }
+        : gate)
+    props.onCircuitChanged(clone)
+  }
+
   if (selectedGates.length === 0) {
     return (
       <Typography variant='body1'>
@@ -297,16 +317,28 @@ export default function Inspector (props) {
 
         {
           selectedGates.length > 1 && (
-            <ButtonGroup
-              fullWidth
-            >
-              <Button onClick={alignX}>
-                Align X
-              </Button>
-              <Button onClick={alignY}>
-                Align Y
-              </Button>
-            </ButtonGroup>
+            <>
+              <ButtonGroup
+                fullWidth
+              >
+                <Button onClick={alignX}>
+                  Align X
+                </Button>
+                <Button onClick={alignY}>
+                  Align Y
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup
+                fullWidth
+              >
+                <Button onClick={distributeX}>
+                  Distribute X
+                </Button>
+                <Button onClick={distributeY}>
+                  Distribute Y
+                </Button>
+              </ButtonGroup>
+            </>
           )
         }
 
