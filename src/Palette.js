@@ -19,6 +19,7 @@ import DemuxSvg from './assets/demux.svg'
 import SevenSegmentSvg from './assets/seven-segment.svg'
 import SrLatchSvg from './assets/sr-latch.svg'
 import DLatchSvg from './assets/d-latch.svg'
+import DFlipFlopSvg from './assets/d-flip-flop.svg'
 import SrDFlipFlopSvg from './assets/sr-d-flip-flop.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
@@ -197,6 +198,11 @@ const Palette = React.memo((props) => {
         svg={DLatchSvg}
         text='D-latch'
         onClick={() => props.onSelect(logic.dLatch)}
+      />
+      <PaletteItem
+        svg={DFlipFlopSvg}
+        text='D-flip-flop'
+        onClick={() => props.onSelect(logic.dFlipFlop)}
       />
       <PaletteItem
         svg={SrDFlipFlopSvg}

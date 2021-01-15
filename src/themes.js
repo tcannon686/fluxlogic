@@ -26,6 +26,7 @@ import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
 import SrLatchSvg from './assets/sr-latch.svg'
 import DLatchSvg from './assets/d-latch.svg'
+import DFlipFlopSvg from './assets/d-flip-flop.svg'
 import SrDFlipFlopSvg from './assets/sr-d-flip-flop.svg'
 
 import SevenSegmentSvg from './assets/seven-segment.svg'
@@ -92,6 +93,7 @@ const defaultThemeSvgs = {
   ),
   srLatch: () => SrLatchSvg,
   dLatch: () => DLatchSvg,
+  dFlipFlop: () => DFlipFlopSvg,
   srDFlipFlop: () => SrDFlipFlopSvg
 }
 
