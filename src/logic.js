@@ -67,6 +67,36 @@ const nextOutputFunctions = {
     } else {
       return [!q, q]
     }
+  },
+  dFlipFlop: (gate, state) => {
+    const inputs = getInputs(gate, state)
+    const outputs = getOutputs(gate, state)
+
+    const r = inputs[0]
+    const cPrev = state.prevState && getInputs(gate, state.prevState)[1]
+    const c = inputs[1]
+    const d = inputs[2]
+    const s = inputs[3]
+
+    const q = outputs[1]
+
+    const isRisingEdge = cPrev !== c && c === true
+
+    /*
+     * Truth table taken from:
+     * https://en.wikipedia.org/wiki/Flip-flop_(electronics)
+     */
+    if (s && !r) {
+      return [false, true]
+    } else if (!s && r) {
+      return [true, false]
+    } else if (s && r) {
+      return [true, true]
+    } else if (isRisingEdge) {
+      return [!d, d]
+    } else {
+      return [!q, q]
+    }
   }
 }
 
@@ -295,6 +325,27 @@ function dLatch () {
 }
 
 /**
+ * Creates a D-flip-flop, where inputs[0] is R, inputs[1] is C, inputs[2] is D,
+ * inputs[3] is S.
+ */
+function dFlipFlop () {
+  return {
+    id: nextId(),
+    type: 'dFlipFlop',
+    inputs: Object.seal([
+      pin(),
+      pin(),
+      pin(),
+      pin()
+    ]),
+    outputs: Object.seal([
+      pin(),
+      pin()
+    ])
+  }
+}
+
+/**
  * Computes a state object to represent the current state of the simulation for
  * the given circuit. If prevState is passed, returns the next state after the
  * given state.
@@ -310,9 +361,22 @@ function dLatch () {
  * The input from the user (for example, whether a switch is switched or not) is
  * stored in the inputs field, that maps a gate ID to a user input object. The
  * format of the input depends on the gate itself.
+ *
+ * The state also keeps track of its state in the previous simulation frame,
+ * stored in the prevState field of the state. This is only used in the flip
+ * flop components to keep track of edge triggered events.
  */
 function nextState (circuit, prevState) {
-  const state = { outputs: {}, inputs: {} }
+  const state = {
+    outputs: {},
+    inputs: {}
+  }
+
+  /* Copy the previous state if it's provided. */
+  if (prevState) {
+    state.prevState = { ...prevState }
+    delete state.prevState.prevState
+  }
 
   if (prevState) {
     for (const gate of circuit.gates) {
@@ -551,6 +615,7 @@ export {
   sevenSegment,
   srLatch,
   dLatch,
+  dFlipFlop,
 
   /* Utils. */
   removeInvalidConnections,
