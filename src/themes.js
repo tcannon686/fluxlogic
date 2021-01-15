@@ -25,6 +25,7 @@ import ReceiverSvg from './assets/receiver.svg'
 import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
 import SrLatchSvg from './assets/sr-latch.svg'
+import DLatchSvg from './assets/d-latch.svg'
 
 import SevenSegmentSvg from './assets/seven-segment.svg'
 import SevenSegment0Svg from './assets/seven-segment-0.svg'
@@ -88,7 +89,8 @@ const defaultThemeSvgs = {
       ]
       : SevenSegmentSvg
   ),
-  srLatch: () => SrLatchSvg
+  srLatch: () => SrLatchSvg,
+  dLatch: () => DLatchSvg
 }
 
 const defaultTheme = {

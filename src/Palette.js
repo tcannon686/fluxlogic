@@ -18,6 +18,7 @@ import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
 import SevenSegmentSvg from './assets/seven-segment.svg'
 import SrLatchSvg from './assets/sr-latch.svg'
+import DLatchSvg from './assets/d-latch.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
 
@@ -190,6 +191,11 @@ const Palette = React.memo((props) => {
         svg={SrLatchSvg}
         text='gated SR-latch'
         onClick={() => props.onSelect(logic.srLatch)}
+      />
+      <PaletteItem
+        svg={DLatchSvg}
+        text='D-latch'
+        onClick={() => props.onSelect(logic.dLatch)}
       />
     </Grid>
   )
