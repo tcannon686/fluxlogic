@@ -26,7 +26,7 @@ import MuxSvg from './assets/mux.svg'
 import DemuxSvg from './assets/demux.svg'
 import SrLatchSvg from './assets/sr-latch.svg'
 import DLatchSvg from './assets/d-latch.svg'
-import DFlipFlopSvg from './assets/d-flip-flop.svg'
+import SrDFlipFlopSvg from './assets/sr-d-flip-flop.svg'
 
 import SevenSegmentSvg from './assets/seven-segment.svg'
 import SevenSegment0Svg from './assets/seven-segment-0.svg'
@@ -92,7 +92,7 @@ const defaultThemeSvgs = {
   ),
   srLatch: () => SrLatchSvg,
   dLatch: () => DLatchSvg,
-  dFlipFlop: () => DFlipFlopSvg
+  srDFlipFlop: () => SrDFlipFlopSvg
 }
 
 const defaultTheme = {
@@ -158,7 +158,7 @@ const defaultTheme = {
         }
       })
       return ret
-    } else if (gate.type === 'dFlipFlop') {
+    } else if (gate.type === 'srDFlipFlop') {
       const ret = {}
       const r = gate.inputs[0]
       const c = gate.inputs[1]

@@ -513,13 +513,13 @@ test('simulates D-latch', () => {
   expect(logic.getOutputs(gates[2], state)).toEqual([true, false])
 })
 
-test('simulates D-flip-flop', () => {
+test('simulates SR-D-flip-flop', () => {
   const gates = [
     logic.constantGate(false),
     logic.constantGate(false),
     logic.constantGate(false),
     logic.constantGate(false),
-    logic.dFlipFlop()
+    logic.srDFlipFlop()
   ]
 
   const circuit = logic.circuit(gates)
