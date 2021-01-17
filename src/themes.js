@@ -120,43 +120,35 @@ const defaultTheme = {
    * should go.
    */
   getPinPositions (gate, x, y, state) {
-    const calcY = (index, length) => (index - (length - 1) / 2) /
+    const distribute = (index, length) => (index - (length - 1) / 2) /
         Math.max(length - 1, 1)
 
     /* Maps a pin ID to a position */
-    if (gate.type === 'mux') {
+    if (gate.type === 'mux' || gate.type === 'demux') {
       const ret = {}
       gate.inputs.forEach((pin, index) => {
-        ret[pin.id] = {
-          x: x,
-          y: y + 0.25 - calcY(
-            index + (index >= gate.n ? 1 : 0),
-            gate.inputs.length + 1) * 0.3
+        if (index < gate.n) {
+          const pinX = x + 0.25 - distribute(index, gate.n) * 0.075
+          ret[pin.id] = {
+            x: pinX,
+            y: y + 0.5,
+            x1: pinX,
+            y1: y + 0.25
+          }
+        } else {
+          ret[pin.id] = {
+            x: x,
+            y: y + 0.25 - distribute(
+              index - gate.n,
+              gate.inputs.length - gate.n) * 0.225
+          }
         }
       })
 
       gate.outputs.forEach((pin, index) => {
         ret[pin.id] = {
           x: x + 0.5,
-          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
-        }
-      })
-      return ret
-    } else if (gate.type === 'demux') {
-      const ret = {}
-      gate.inputs.forEach((pin, index) => {
-        ret[pin.id] = {
-          x: x,
-          y: y + 0.3 - calcY(
-            index + (index >= gate.n ? 1 : 0),
-            gate.inputs.length + 1) * 0.2
-        }
-      })
-
-      gate.outputs.forEach((pin, index) => {
-        ret[pin.id] = {
-          x: x + 0.5,
-          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.3
+          y: y + 0.25 - distribute(index, gate.outputs.length) * 0.225
         }
       })
       return ret
@@ -170,7 +162,7 @@ const defaultTheme = {
       const f = (pin, index) => {
         ret[pin.id] = {
           x: x,
-          y: y + 0.25 - calcY(index, 2) * 0.225
+          y: y + 0.25 - distribute(index, 2) * 0.225
         }
       }
 
@@ -194,7 +186,7 @@ const defaultTheme = {
       gate.outputs.forEach((pin, index) => {
         ret[pin.id] = {
           x: x + 0.5,
-          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
+          y: y + 0.25 - distribute(index, gate.outputs.length) * 0.225
         }
       })
 
@@ -205,14 +197,14 @@ const defaultTheme = {
       gate.inputs.forEach((pin, index) => {
         ret[pin.id] = {
           x: x,
-          y: y + 0.25 - calcY(index, gate.inputs.length) * 0.225
+          y: y + 0.25 - distribute(index, gate.inputs.length) * 0.225
         }
       })
 
       gate.outputs.forEach((pin, index) => {
         ret[pin.id] = {
           x: x + 0.5,
-          y: y + 0.25 - calcY(index, gate.outputs.length) * 0.225
+          y: y + 0.25 - distribute(index, gate.outputs.length) * 0.225
         }
       })
 
