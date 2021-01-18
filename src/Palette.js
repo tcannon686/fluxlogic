@@ -21,6 +21,7 @@ import SrLatchSvg from './assets/sr-latch.svg'
 import DLatchSvg from './assets/d-latch.svg'
 import DFlipFlopSvg from './assets/d-flip-flop.svg'
 import SrDFlipFlopSvg from './assets/sr-d-flip-flop.svg'
+import TextSvg from './assets/text.svg'
 
 import PinInvertedSvg from './assets/pin-inverted.svg'
 
@@ -208,6 +209,11 @@ const Palette = React.memo((props) => {
         svg={SrDFlipFlopSvg}
         text='SR-D-flip-flop'
         onClick={() => props.onSelect(logic.srDFlipFlop)}
+      />
+      <PaletteItem
+        svg={TextSvg}
+        text='text'
+        onClick={() => props.onSelect(() => logic.text('Text'))}
       />
     </Grid>
   )

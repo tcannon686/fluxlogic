@@ -48,7 +48,7 @@ import SevenSegment13Svg from './assets/seven-segment-13.svg'
 import SevenSegment14Svg from './assets/seven-segment-14.svg'
 import SevenSegment15Svg from './assets/seven-segment-15.svg'
 
-import LogicGate from './LogicGate'
+import { LogicGate, Text } from './LogicGate'
 
 const sevenSegmentSvgs = [
   SevenSegment0Svg,
@@ -124,7 +124,8 @@ const defaultThemeComponents = {
   srLatch: (props) => <LogicGate svg={SrLatchSvg} {...props} />,
   dLatch: (props) => <LogicGate svg={DLatchSvg} {...props} />,
   dFlipFlop: (props) => <LogicGate svg={DFlipFlopSvg} {...props} />,
-  srDFlipFlop: (props) => <LogicGate svg={SrDFlipFlopSvg} {...props} />
+  srDFlipFlop: (props) => <LogicGate svg={SrDFlipFlopSvg} {...props} />,
+  text: (props) => <Text {...props} />
 }
 
 const defaultTheme = {
@@ -242,11 +243,11 @@ const defaultTheme = {
   },
 
   getWidth (gate, state) {
-    return 0.5
+    return gate.width || 0.5
   },
 
   getHeight (gate, state) {
-    return 0.5
+    return gate.height || 0.5
   }
 }
 

@@ -2,6 +2,8 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { fade } from '@material-ui/core/styles/colorManipulator'
 
+import ReactMarkdown from 'react-markdown'
+
 import Wire from './Wire'
 
 const useStyles = makeStyles((theme) => ({
@@ -60,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
 /*
  * A react component representing a single logic gate.
  */
-const LogicGate = React.memo((props) => {
+export const LogicGateContainer = (props) => {
   /*
    * The object responsible for placing the pins and choosing the SVGs. Note
    * that this is not related to the material-ui theme.
@@ -138,14 +140,10 @@ const LogicGate = React.memo((props) => {
           />)
       }
 
-      {/* The gate itself */}
-      <img
-        alt={props.gate.type}
-        src={props.svg}
-        style={{ position: 'absolute' }}
-        onClick={(e) => props.onGateClick(e, props.gate)}
-        onMouseDown={(e) => props.onGateMouseDown(e, props.gate)}
-      />
+      {
+        /* The gate itself */
+        props.children
+      }
 
       {
         props.gate.label && (
@@ -173,6 +171,36 @@ const LogicGate = React.memo((props) => {
       }
     </div>
   )
-})
+}
 
-export default LogicGate
+export const LogicGate = React.memo((props) => (
+  <LogicGateContainer {...props}>
+    <img
+      alt={props.gate.type}
+      src={props.svg}
+      style={{ position: 'absolute' }}
+      onClick={(e) => props.onGateClick(e, props.gate)}
+      onMouseDown={(e) => props.onGateMouseDown(e, props.gate)}
+    />
+  </LogicGateContainer>
+))
+
+export const Text = React.memo((props) => (
+  <LogicGateContainer {...props}>
+    <div
+      onClick={(e) => props.onGateClick(e, props.gate)}
+      onMouseDown={(e) => props.onGateMouseDown(e, props.gate)}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%'
+      }}
+    >
+      <ReactMarkdown>
+        {props.gate.text}
+      </ReactMarkdown>
+    </div>
+  </LogicGateContainer>
+))

@@ -115,6 +115,15 @@ gates. Clicking the 'Distribute X' and 'Distribute Y' buttons in the inspector
 will take the selected gate and distribute them so that they are evenly
 spaced from the first gate.
 
+### Adding text
+When creating circuits and assignments, it is often useful to create text
+visible from within the circuit. Flux Logic provides a way to do just that!
+Simply select the 'Text' component from the palette, and you will see it appear
+on the page! Edit the text and size of the textbox from the 'properties'
+menu.
+ > Flux Logic lets you use [Markdown](https://www.markdownguide.org/) to format
+ > text, so you can add _italics_, **boldface**, links, and more!
+
 ### Keyboard shortcuts
 
 Flux Logic also provides some keyboard shortcuts to make editing easier. Below

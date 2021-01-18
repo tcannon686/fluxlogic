@@ -11,6 +11,7 @@ const nextOutputFunctions = {
   ],
   constant: (gate, state) => [gate.value],
   led: () => [],
+  text: () => [],
   buffer: (gate, state) => getInputs(gate, state),
   switch: (gate, state) => [Boolean(getUserInput(gate, state))],
   sender: () => [],
@@ -382,6 +383,22 @@ function srDFlipFlop () {
 }
 
 /**
+ * Creates a text component, which displays text on the screen. It has a
+ * text field, which contains the text to be displayed.
+ */
+function text (string) {
+  return {
+    id: nextId(),
+    type: 'text',
+    inputs: Object.seal([]),
+    outputs: Object.seal([]),
+    text: string,
+    width: 2,
+    height: 0.5
+  }
+}
+
+/**
  * Computes a state object to represent the current state of the simulation for
  * the given circuit. If prevState is passed, returns the next state after the
  * given state.
@@ -653,6 +670,7 @@ export {
   dLatch,
   srDFlipFlop,
   dFlipFlop,
+  text,
 
   /* Utils. */
   removeInvalidConnections,

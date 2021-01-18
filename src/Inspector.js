@@ -122,8 +122,6 @@ export default function Inspector (props) {
     props.onCircuitChanged(clone)
   }
 
-  const gate = selectedGates[0]
-
   const updatePin = (index, pin, isOutput) => {
     const clone = { ...circuit }
     clone.gates = [...circuit.gates]
@@ -215,6 +213,21 @@ export default function Inspector (props) {
     props.onCircuitChanged(clone)
   }
 
+  const gate = selectedGates[0]
+
+  /* Properties only editable for a single gate. */
+  const [text, setText] = useState('')
+  const [width, setWidth] = useState(0)
+  const [height, setHeight] = useState(0)
+
+  useEffect(() => {
+    if (gate) {
+      setText(gate.text || '')
+      setWidth(gate.width || 0)
+      setHeight(gate.height || 0)
+    }
+  }, [gate])
+
   if (selectedGates.length === 0) {
     return (
       <Typography variant='body1'>
@@ -227,7 +240,7 @@ export default function Inspector (props) {
       gate.type === 'or' ||
       gate.type === 'xor')
 
-    const gateProps = (
+    const inputProps = (
       <>
         <Typography variant='h5'>Inputs</Typography>
         <List>
@@ -262,7 +275,11 @@ export default function Inspector (props) {
         )
           }
         </List>
+      </>
+    )
 
+    const outputProps = (
+      <>
         <Typography variant='h5'>Outputs</Typography>
         <List>
           {
@@ -280,8 +297,77 @@ export default function Inspector (props) {
       </>
     )
 
-    return (
-      <form className={classes.form} noValidate>
+    const textProps = (
+      <>
+        <Typography variant='h5'>Text</Typography>
+        <TextField
+          multiline
+          fullWidth
+          label='Text'
+          variant='filled'
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onBlur={(e) => {
+            if (e.target.value.length > 0) {
+              updateGates((gate) => ({
+                ...gate,
+                text: e.target.value
+              }))
+            }
+          }}
+        />
+      </>
+    )
+
+    const sizeProps = (
+      <>
+        <Typography variant='h5'>Size</Typography>
+        <TextField
+          fullWidth
+          label='Width'
+          variant='filled'
+          value={width}
+          onChange={(e) => setWidth(e.target.value)}
+          onBlur={(e) => {
+            if (!isNaN(e.target.value)) {
+              updateGates((gate) => ({
+                ...gate,
+                width: Number(e.target.value)
+              }))
+            }
+          }}
+        />
+
+        <TextField
+          fullWidth
+          label='Height'
+          variant='filled'
+          onChange={(e) => setHeight(e.target.value)}
+          value={height}
+          onBlur={(e) => {
+            if (!isNaN(e.target.value)) {
+              updateGates((gate) => ({
+                ...gate,
+                height: Number(e.target.value)
+              }))
+            }
+          }}
+        />
+      </>
+    )
+
+    /* Properties only editable for an individual gate. */
+    const gateProps = (
+      <>
+        {gate.inputs.length > 0 && inputProps}
+        {gate.outputs.length > 0 && outputProps}
+        {gate.width !== undefined && gate.height !== undefined && sizeProps}
+        {gate.text !== undefined && textProps}
+      </>
+    )
+
+    const positionProps = (
+      <>
         <Typography variant='h5'>Position</Typography>
         <TextField
           fullWidth
@@ -341,7 +427,11 @@ export default function Inspector (props) {
             </>
           )
         }
+      </>
+    )
 
+    const labelProps = (
+      <>
         <Typography variant='h5'>Label</Typography>
         <TextField
           fullWidth
@@ -349,7 +439,6 @@ export default function Inspector (props) {
           variant='filled'
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          disabled={!allHaveLabels}
           onBlur={(e) => {
             if (e.target.value.length > 0) {
               updateGates((gate) => ({
@@ -359,10 +448,14 @@ export default function Inspector (props) {
             }
           }}
         />
+      </>
+    )
 
-        {
-          selectedGates.length === 1 && gateProps
-        }
+    return (
+      <form className={classes.form} noValidate>
+        {positionProps}
+        {allHaveLabels && labelProps}
+        {selectedGates.length === 1 && gateProps}
       </form>
     )
   }
