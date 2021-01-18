@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/fluxlogic/precache-manifest.68fbb8094240841b09ae94d5df3e00ca.js"
+  "/fluxlogic/precache-manifest.4571ec5ad04cacf81466a81fdd59c0e3.js"
 );
 
 self.addEventListener('message', (event) => {
