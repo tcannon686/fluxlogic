@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import { useRefCallback } from './hooks'
 
 import Wire from './Wire'
-import LogicGate from './LogicGate'
 
 /**
  * React component used to hold a circuit.
@@ -72,10 +71,12 @@ export default function Circuit (props) {
           const y = (gate.y || 0) +
             (props.selection[gate.id] ? moveAmount[1] : 0)
 
+          const Component = theme.getGateComponent(gate)
+
           return (
-            <LogicGate
+            <Component
+              simState={simState}
               gate={gate}
-              svg={theme.getGateSvg(gate, simState)}
               x={x}
               y={y}
               key={gate.id}

@@ -4,6 +4,7 @@
  */
 
 import * as logic from './logic'
+import React from 'react'
 
 /* SVGs */
 import AndGateSvg from './assets/and-gate.svg'
@@ -47,6 +48,8 @@ import SevenSegment13Svg from './assets/seven-segment-13.svg'
 import SevenSegment14Svg from './assets/seven-segment-14.svg'
 import SevenSegment15Svg from './assets/seven-segment-15.svg'
 
+import LogicGate from './LogicGate'
+
 const sevenSegmentSvgs = [
   SevenSegment0Svg,
   SevenSegment1Svg,
@@ -66,35 +69,62 @@ const sevenSegmentSvgs = [
   SevenSegment15Svg
 ]
 
-const defaultThemeSvgs = {
-  and: () => AndGateSvg,
-  or: () => OrGateSvg,
-  xor: () => XorGateSvg,
-  buffer: () => BufferGateSvg,
-  led: (gate, state) =>
-    state
-      ? (logic.getInputs(gate, state)[0] ? LedGlowSvg : LedSvg)
-      : LedSvg,
-  constant: (gate) => gate.value ? OneGateSvg : ZeroGateSvg,
-  switch: (gate, state) =>
-    state
-      ? (logic.getUserInput(gate, state) ? SwitchOnSvg : SwitchOffSvg)
-      : SwitchOffSvg,
-  sender: () => SenderSvg,
-  receiver: () => ReceiverSvg,
-  mux: () => MuxSvg,
-  demux: () => DemuxSvg,
-  sevenSegment: (gate, state) => (
-    state
-      ? sevenSegmentSvgs[
-        logic.getInputs(gate, state).reduce((a, c, i) => a + Number(c) * (1 << i))
-      ]
-      : SevenSegmentSvg
+const defaultThemeComponents = {
+  and: (props) => <LogicGate {...props} svg={AndGateSvg} />,
+  or: (props) => <LogicGate svg={OrGateSvg} {...props} />,
+  xor: (props) => <LogicGate svg={XorGateSvg} {...props} />,
+  buffer: (props) => <LogicGate svg={BufferGateSvg} {...props} />,
+  led: (props) => (
+    <LogicGate
+      svg={
+        props.simState
+          ? (logic.getInputs(props.gate, props.simState)[0]
+            ? LedGlowSvg
+            : LedSvg)
+          : LedSvg
+      }
+      {...props}
+    />
   ),
-  srLatch: () => SrLatchSvg,
-  dLatch: () => DLatchSvg,
-  dFlipFlop: () => DFlipFlopSvg,
-  srDFlipFlop: () => SrDFlipFlopSvg
+  constant: (props) => (
+    <LogicGate
+      svg={props.gate.value ? OneGateSvg : ZeroGateSvg}
+      {...props}
+    />
+  ),
+  switch: (props) => (
+    <LogicGate
+      svg={
+        props.simState
+          ? (logic.getUserInput(props.gate, props.simState)
+            ? SwitchOnSvg
+            : SwitchOffSvg)
+          : SwitchOffSvg
+      }
+      {...props}
+    />
+  ),
+  sender: (props) => <LogicGate svg={SenderSvg} {...props} />,
+  receiver: (props) => <LogicGate svg={ReceiverSvg} {...props} />,
+  mux: (props) => <LogicGate svg={MuxSvg} {...props} />,
+  demux: (props) => <LogicGate svg={DemuxSvg} {...props} />,
+  sevenSegment: (props) => (
+    <LogicGate
+      svg={
+        props.simState
+          ? sevenSegmentSvgs[
+            logic.getInputs(props.gate, props.simState)
+              .reduce((a, c, i) => a + Number(c) * (1 << i))
+          ]
+          : SevenSegmentSvg
+      }
+      {...props}
+    />
+  ),
+  srLatch: (props) => <LogicGate svg={SrLatchSvg} {...props} />,
+  dLatch: (props) => <LogicGate svg={DLatchSvg} {...props} />,
+  dFlipFlop: (props) => <LogicGate svg={DFlipFlopSvg} {...props} />,
+  srDFlipFlop: (props) => <LogicGate svg={SrDFlipFlopSvg} {...props} />
 }
 
 const defaultTheme = {
@@ -108,9 +138,8 @@ const defaultTheme = {
         ? PinInvertedSvg
         : PinSvg)),
 
-  /* Returns an SVG for the given gate. */
-  getGateSvg (gate, state) {
-    return defaultThemeSvgs[gate.type](gate, state)
+  getGateComponent (gate) {
+    return defaultThemeComponents[gate.type]
   },
 
   /*
