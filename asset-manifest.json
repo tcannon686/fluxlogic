@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/fluxlogic/static/css/main.5ecd60fb.chunk.css",
-    "main.js": "/fluxlogic/static/js/main.bd4cc42b.chunk.js",
-    "main.js.map": "/fluxlogic/static/js/main.bd4cc42b.chunk.js.map",
+    "main.js": "/fluxlogic/static/js/main.af3cd371.chunk.js",
+    "main.js.map": "/fluxlogic/static/js/main.af3cd371.chunk.js.map",
     "runtime-main.js": "/fluxlogic/static/js/runtime-main.e83e6801.js",
     "runtime-main.js.map": "/fluxlogic/static/js/runtime-main.e83e6801.js.map",
     "static/js/2.5a9b9902.chunk.js": "/fluxlogic/static/js/2.5a9b9902.chunk.js",
     "static/js/2.5a9b9902.chunk.js.map": "/fluxlogic/static/js/2.5a9b9902.chunk.js.map",
-    "06317605202e7216ffb1.worker.js": "/fluxlogic/06317605202e7216ffb1.worker.js",
-    "06317605202e7216ffb1.worker.js.map": "/fluxlogic/06317605202e7216ffb1.worker.js.map",
+    "d7c5e2e18a2ec0baaa66.worker.js": "/fluxlogic/d7c5e2e18a2ec0baaa66.worker.js",
+    "d7c5e2e18a2ec0baaa66.worker.js.map": "/fluxlogic/d7c5e2e18a2ec0baaa66.worker.js.map",
     "index.html": "/fluxlogic/index.html",
-    "precache-manifest.4571ec5ad04cacf81466a81fdd59c0e3.js": "/fluxlogic/precache-manifest.4571ec5ad04cacf81466a81fdd59c0e3.js",
+    "precache-manifest.b950f9168ae63579b78be424a58f674f.js": "/fluxlogic/precache-manifest.b950f9168ae63579b78be424a58f674f.js",
     "service-worker.js": "/fluxlogic/service-worker.js",
     "static/css/main.5ecd60fb.chunk.css.map": "/fluxlogic/static/css/main.5ecd60fb.chunk.css.map",
     "static/js/2.5a9b9902.chunk.js.LICENSE.txt": "/fluxlogic/static/js/2.5a9b9902.chunk.js.LICENSE.txt",
@@ -59,6 +59,6 @@
     "static/js/runtime-main.e83e6801.js",
     "static/js/2.5a9b9902.chunk.js",
     "static/css/main.5ecd60fb.chunk.css",
-    "static/js/main.bd4cc42b.chunk.js"
+    "static/js/main.af3cd371.chunk.js"
   ]
 }
