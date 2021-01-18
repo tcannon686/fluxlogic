@@ -312,6 +312,9 @@ function App () {
     clone.gates = clone.gates.filter((gate) => !selection[gate.id])
     clone.gates = logic.removeInvalidConnections(clone.gates)
     setCircuit(clone)
+
+    /* Clear selection. */
+    setSelection({})
   }
 
   const cut = () => {
