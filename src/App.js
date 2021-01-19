@@ -494,6 +494,11 @@ function App () {
               aria-label='help'
               className={classes.menuButton}
               color='inherit'
+              onClick={() => {
+                window.open(
+                  'https://github.com/tcannon686/fluxlogic#usage',
+                  '_blank')
+              }}
             >
               <HelpIcon />
             </Button>
