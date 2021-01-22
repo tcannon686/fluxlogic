@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/fluxlogic/static/css/main.5ecd60fb.chunk.css",
-    "main.js": "/fluxlogic/static/js/main.31a946e4.chunk.js",
-    "main.js.map": "/fluxlogic/static/js/main.31a946e4.chunk.js.map",
+    "main.js": "/fluxlogic/static/js/main.7306cb94.chunk.js",
+    "main.js.map": "/fluxlogic/static/js/main.7306cb94.chunk.js.map",
     "runtime-main.js": "/fluxlogic/static/js/runtime-main.e83e6801.js",
     "runtime-main.js.map": "/fluxlogic/static/js/runtime-main.e83e6801.js.map",
     "static/js/2.a2c3fbe2.chunk.js": "/fluxlogic/static/js/2.a2c3fbe2.chunk.js",
@@ -10,7 +10,7 @@
     "d7c5e2e18a2ec0baaa66.worker.js": "/fluxlogic/d7c5e2e18a2ec0baaa66.worker.js",
     "d7c5e2e18a2ec0baaa66.worker.js.map": "/fluxlogic/d7c5e2e18a2ec0baaa66.worker.js.map",
     "index.html": "/fluxlogic/index.html",
-    "precache-manifest.6332ccb751ab6255ba375afe8a8aeb29.js": "/fluxlogic/precache-manifest.6332ccb751ab6255ba375afe8a8aeb29.js",
+    "precache-manifest.5e13ee11fcb02d48a7deeb1e7375f2a5.js": "/fluxlogic/precache-manifest.5e13ee11fcb02d48a7deeb1e7375f2a5.js",
     "service-worker.js": "/fluxlogic/service-worker.js",
     "static/css/main.5ecd60fb.chunk.css.map": "/fluxlogic/static/css/main.5ecd60fb.chunk.css.map",
     "static/js/2.a2c3fbe2.chunk.js.LICENSE.txt": "/fluxlogic/static/js/2.a2c3fbe2.chunk.js.LICENSE.txt",
@@ -59,6 +59,6 @@
     "static/js/runtime-main.e83e6801.js",
     "static/js/2.a2c3fbe2.chunk.js",
     "static/css/main.5ecd60fb.chunk.css",
-    "static/js/main.31a946e4.chunk.js"
+    "static/js/main.7306cb94.chunk.js"
   ]
 }

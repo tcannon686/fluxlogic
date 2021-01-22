@@ -4,11 +4,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fluxlogic/d7c5e2e18a2ec0baaa66.worker.js"
   },
   {
-    "revision": "28e1fd57fd9bc722900d9a82ad00bb59",
+    "revision": "ab0539c270ace7aa90990acdb2fa2349",
     "url": "/fluxlogic/index.html"
   },
   {
-    "revision": "e761f5e18295e6ccf8fc",
+    "revision": "bc308b50544646d011c0",
     "url": "/fluxlogic/static/css/main.5ecd60fb.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/fluxlogic/static/js/2.a2c3fbe2.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "e761f5e18295e6ccf8fc",
-    "url": "/fluxlogic/static/js/main.31a946e4.chunk.js"
+    "revision": "bc308b50544646d011c0",
+    "url": "/fluxlogic/static/js/main.7306cb94.chunk.js"
   },
   {
     "revision": "a854bc0ac6c336b98e85",
