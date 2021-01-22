@@ -3,6 +3,9 @@ import React from 'react'
 import Tooltip from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
+import List from '@material-ui/core/List'
+
+import ListSection from './ListSection'
 
 import AndGateSvg from './assets/and-gate.svg'
 import OrGateSvg from './assets/or-gate.svg'
@@ -96,126 +99,146 @@ const Palette = React.memo((props) => {
     return gate
   }
   return (
-    <Grid container className={props.className}>
-      <PaletteItem
-        svg={AndGateSvg}
-        text='AND gate'
-        onClick={() => props.onSelect(logic.andGate)}
-      />
-      <PaletteItem
-        svg={AndGateSvg}
-        text='NAND gate'
-        onClick={() => props.onSelect(() => invert(logic.andGate()))}
-        inverted
-      />
-      <PaletteItem
-        svg={OrGateSvg}
-        text='OR gate'
-        onClick={() => props.onSelect(logic.orGate)}
-      />
-      <PaletteItem
-        svg={OrGateSvg}
-        text='NOR gate'
-        onClick={() => props.onSelect(() => invert(logic.orGate()))}
-        inverted
-      />
-      <PaletteItem
-        svg={XorGateSvg}
-        text='XOR gate'
-        onClick={() => props.onSelect(logic.xorGate)}
-      />
-      <PaletteItem
-        svg={ZeroGateSvg}
-        text='ground'
-        onClick={() => props.onSelect(() => logic.constantGate(false))}
-      />
-      <PaletteItem
-        svg={OneGateSvg}
-        text='+1'
-        onClick={() => props.onSelect(() => logic.constantGate(true))}
-      />
-      <PaletteItem
-        svg={BufferGateSvg}
-        text='buffer'
-        onClick={() => props.onSelect(() => logic.buffer())}
-      />
-      <PaletteItem
-        svg={BufferGateSvg}
-        text='inverter'
-        onClick={() => props.onSelect(() => invert(logic.buffer()))}
-        inverted
-      />
-      <PaletteItem
-        svg={LedSvg}
-        text='LED'
-        onClick={() => props.onSelect(() => logic.led())}
-      />
-      <PaletteItem
-        svg={SwitchOffSvg}
-        text='switch'
-        onClick={() => props.onSelect(logic.switchGate)}
-      />
-      <PaletteItem
-        svg={SenderSvg}
-        text='sender'
-        onClick={() => props.onSelect(logic.sender)}
-      />
-      <PaletteItem
-        svg={ReceiverSvg}
-        text='receiver'
-        onClick={() => props.onSelect(logic.receiver)}
-      />
-      <PaletteItem
-        svg={MuxSvg}
-        text='2 to 1 mux'
-        onClick={() => props.onSelect(() => logic.mux(1))}
-      />
-      <PaletteItem
-        svg={MuxSvg}
-        text='4 to 1 mux'
-        onClick={() => props.onSelect(() => logic.mux(2))}
-      />
-      <PaletteItem
-        svg={DemuxSvg}
-        text='1 to 2 demux'
-        onClick={() => props.onSelect(() => logic.demux(1))}
-      />
-      <PaletteItem
-        svg={DemuxSvg}
-        text='1 to 4 demux'
-        onClick={() => props.onSelect(() => logic.demux(2))}
-      />
-      <PaletteItem
-        svg={SevenSegmentSvg}
-        text='7-segment display'
-        onClick={() => props.onSelect(logic.sevenSegment)}
-      />
-      <PaletteItem
-        svg={SrLatchSvg}
-        text='gated SR-latch'
-        onClick={() => props.onSelect(logic.srLatch)}
-      />
-      <PaletteItem
-        svg={DLatchSvg}
-        text='D-latch'
-        onClick={() => props.onSelect(logic.dLatch)}
-      />
-      <PaletteItem
-        svg={DFlipFlopSvg}
-        text='D-flip-flop'
-        onClick={() => props.onSelect(logic.dFlipFlop)}
-      />
-      <PaletteItem
-        svg={SrDFlipFlopSvg}
-        text='SR-D-flip-flop'
-        onClick={() => props.onSelect(logic.srDFlipFlop)}
-      />
-      <PaletteItem
-        svg={TextSvg}
-        text='text'
-        onClick={() => props.onSelect(() => logic.text('Text'))}
-      />
-    </Grid>
+    <List>
+      <ListSection title='Basic Gates'>
+        <Grid container>
+          <PaletteItem
+            svg={AndGateSvg}
+            text='AND gate'
+            onClick={() => props.onSelect(logic.andGate)}
+          />
+          <PaletteItem
+            svg={AndGateSvg}
+            text='NAND gate'
+            onClick={() => props.onSelect(() => invert(logic.andGate()))}
+            inverted
+          />
+          <PaletteItem
+            svg={OrGateSvg}
+            text='OR gate'
+            onClick={() => props.onSelect(logic.orGate)}
+          />
+          <PaletteItem
+            svg={OrGateSvg}
+            text='NOR gate'
+            onClick={() => props.onSelect(() => invert(logic.orGate()))}
+            inverted
+          />
+          <PaletteItem
+            svg={XorGateSvg}
+            text='XOR gate'
+            onClick={() => props.onSelect(logic.xorGate)}
+          />
+          <PaletteItem
+            svg={ZeroGateSvg}
+            text='ground'
+            onClick={() => props.onSelect(() => logic.constantGate(false))}
+          />
+          <PaletteItem
+            svg={OneGateSvg}
+            text='+1'
+            onClick={() => props.onSelect(() => logic.constantGate(true))}
+          />
+          <PaletteItem
+            svg={BufferGateSvg}
+            text='buffer'
+            onClick={() => props.onSelect(() => logic.buffer())}
+          />
+          <PaletteItem
+            svg={BufferGateSvg}
+            text='inverter'
+            onClick={() => props.onSelect(() => invert(logic.buffer()))}
+            inverted
+          />
+        </Grid>
+      </ListSection>
+      <ListSection title='Input/Output'>
+        <Grid container>
+          <PaletteItem
+            svg={LedSvg}
+            text='LED'
+            onClick={() => props.onSelect(() => logic.led())}
+          />
+          <PaletteItem
+            svg={SevenSegmentSvg}
+            text='7-segment display'
+            onClick={() => props.onSelect(logic.sevenSegment)}
+          />
+          <PaletteItem
+            svg={SwitchOffSvg}
+            text='switch'
+            onClick={() => props.onSelect(logic.switchGate)}
+          />
+          <PaletteItem
+            svg={SenderSvg}
+            text='sender'
+            onClick={() => props.onSelect(logic.sender)}
+          />
+          <PaletteItem
+            svg={ReceiverSvg}
+            text='receiver'
+            onClick={() => props.onSelect(logic.receiver)}
+          />
+        </Grid>
+      </ListSection>
+      <ListSection title='Mux/Demux'>
+        <Grid container>
+          <PaletteItem
+            svg={MuxSvg}
+            text='2 to 1 mux'
+            onClick={() => props.onSelect(() => logic.mux(1))}
+          />
+          <PaletteItem
+            svg={MuxSvg}
+            text='4 to 1 mux'
+            onClick={() => props.onSelect(() => logic.mux(2))}
+          />
+          <PaletteItem
+            svg={DemuxSvg}
+            text='1 to 2 demux'
+            onClick={() => props.onSelect(() => logic.demux(1))}
+          />
+          <PaletteItem
+            svg={DemuxSvg}
+            text='1 to 4 demux'
+            onClick={() => props.onSelect(() => logic.demux(2))}
+          />
+        </Grid>
+      </ListSection>
+      <ListSection title='Flip-Flops and Latches'>
+        <Grid container>
+          <PaletteItem
+            svg={SrLatchSvg}
+            text='gated SR-latch'
+            onClick={() => props.onSelect(logic.srLatch)}
+          />
+          <PaletteItem
+            svg={DLatchSvg}
+            text='D-latch'
+            onClick={() => props.onSelect(logic.dLatch)}
+          />
+          <PaletteItem
+            svg={DFlipFlopSvg}
+            text='D-flip-flop'
+            onClick={() => props.onSelect(logic.dFlipFlop)}
+          />
+          <PaletteItem
+            svg={SrDFlipFlopSvg}
+            text='SR-D-flip-flop'
+            onClick={() => props.onSelect(logic.srDFlipFlop)}
+          />
+        </Grid>
+      </ListSection>
+      <ListSection title='Other'>
+        <Grid container>
+          <PaletteItem
+            svg={TextSvg}
+            text='text'
+            onClick={() => props.onSelect(() => logic.text('Text'))}
+          />
+        </Grid>
+      </ListSection>
+    </List>
   )
 })
 

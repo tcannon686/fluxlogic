@@ -6,6 +6,7 @@ import * as logic from './logic'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 /* Material UI components. */
+import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Checkbox from '@material-ui/core/Checkbox'
@@ -17,10 +18,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Tooltip from '@material-ui/core/Tooltip'
 
+import ListSection from './ListSection'
+
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
-  form: {
+  evenlySpaced: {
     '& > *': {
       margin: theme.spacing(1)
     }
@@ -230,9 +233,11 @@ export default function Inspector (props) {
 
   if (selectedGates.length === 0) {
     return (
-      <Typography variant='body1'>
-        Make a selection, then its properties will be available here.
-      </Typography>
+      <Box p={3}>
+        <Typography variant='body1'>
+          Make a selection, then its properties will be available here.
+        </Typography>
+      </Box>
     )
   } else {
     const isLogicGate = (
@@ -241,8 +246,7 @@ export default function Inspector (props) {
       gate.type === 'xor')
 
     const inputProps = (
-      <>
-        <Typography variant='h5'>Inputs</Typography>
+      <ListSection title='Inputs'>
         <List>
           {
             gate.inputs.map((pin, i) =>
@@ -275,12 +279,11 @@ export default function Inspector (props) {
         )
           }
         </List>
-      </>
+      </ListSection>
     )
 
     const outputProps = (
-      <>
-        <Typography variant='h5'>Outputs</Typography>
+      <ListSection title='Outputs'>
         <List>
           {
             gate.outputs.map((pin, i) =>
@@ -294,12 +297,11 @@ export default function Inspector (props) {
             )
           }
         </List>
-      </>
+      </ListSection>
     )
 
     const textProps = (
-      <>
-        <Typography variant='h5'>Text</Typography>
+      <ListSection title='Text'>
         <TextField
           multiline
           fullWidth
@@ -316,44 +318,45 @@ export default function Inspector (props) {
             }
           }}
         />
-      </>
+      </ListSection>
     )
 
     const sizeProps = (
-      <>
-        <Typography variant='h5'>Size</Typography>
-        <TextField
-          fullWidth
-          label='Width'
-          variant='filled'
-          value={width}
-          onChange={(e) => setWidth(e.target.value)}
-          onBlur={(e) => {
-            if (!isNaN(e.target.value)) {
-              updateGates((gate) => ({
-                ...gate,
-                width: Number(e.target.value)
-              }))
-            }
-          }}
-        />
+      <ListSection title='Size'>
+        <Box class={classes.evenlySpaced}>
+          <TextField
+            fullWidth
+            label='Width'
+            variant='filled'
+            value={width}
+            onChange={(e) => setWidth(e.target.value)}
+            onBlur={(e) => {
+              if (!isNaN(e.target.value)) {
+                updateGates((gate) => ({
+                  ...gate,
+                  width: Number(e.target.value)
+                }))
+              }
+            }}
+          />
 
-        <TextField
-          fullWidth
-          label='Height'
-          variant='filled'
-          onChange={(e) => setHeight(e.target.value)}
-          value={height}
-          onBlur={(e) => {
-            if (!isNaN(e.target.value)) {
-              updateGates((gate) => ({
-                ...gate,
-                height: Number(e.target.value)
-              }))
-            }
-          }}
-        />
-      </>
+          <TextField
+            fullWidth
+            label='Height'
+            variant='filled'
+            onChange={(e) => setHeight(e.target.value)}
+            value={height}
+            onBlur={(e) => {
+              if (!isNaN(e.target.value)) {
+                updateGates((gate) => ({
+                  ...gate,
+                  height: Number(e.target.value)
+                }))
+              }
+            }}
+          />
+        </Box>
+      </ListSection>
     )
 
     /* Properties only editable for an individual gate. */
@@ -367,95 +370,99 @@ export default function Inspector (props) {
     )
 
     const positionProps = (
-      <>
-        <Typography variant='h5'>Position</Typography>
-        <TextField
-          fullWidth
-          label='X'
-          variant='filled'
-          value={x}
-          onChange={(e) => setX(e.target.value)}
-          onBlur={(e) => {
-            if (!isNaN(e.target.value)) {
-              updateGates((gate) => ({
-                ...gate,
-                x: Number(e.target.value) - minX + gate.x
-              }))
-            }
-          }}
-        />
+      <ListSection title='Position'>
+        <Box class={classes.evenlySpaced}>
+          <TextField
+            fullWidth
+            label='X'
+            variant='filled'
+            value={x}
+            onChange={(e) => setX(e.target.value)}
+            onBlur={(e) => {
+              if (!isNaN(e.target.value)) {
+                updateGates((gate) => ({
+                  ...gate,
+                  x: Number(e.target.value) - minX + gate.x
+                }))
+              }
+            }}
+          />
 
-        <TextField
-          fullWidth
-          label='Y'
-          variant='filled'
-          onChange={(e) => setY(e.target.value)}
-          value={y}
-          onBlur={(e) => {
-            if (!isNaN(e.target.value)) {
-              updateGates((gate) => ({
-                ...gate,
-                y: Number(e.target.value) - minY + gate.y
-              }))
-            }
-          }}
-        />
+          <TextField
+            fullWidth
+            label='Y'
+            variant='filled'
+            onChange={(e) => setY(e.target.value)}
+            value={y}
+            onBlur={(e) => {
+              if (!isNaN(e.target.value)) {
+                updateGates((gate) => ({
+                  ...gate,
+                  y: Number(e.target.value) - minY + gate.y
+                }))
+              }
+            }}
+          />
 
-        {
-          selectedGates.length > 1 && (
-            <>
-              <ButtonGroup
-                fullWidth
-              >
-                <Button onClick={alignX}>
-                  Align X
-                </Button>
-                <Button onClick={alignY}>
-                  Align Y
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup
-                fullWidth
-              >
-                <Button onClick={distributeX}>
-                  Distribute X
-                </Button>
-                <Button onClick={distributeY}>
-                  Distribute Y
-                </Button>
-              </ButtonGroup>
-            </>
-          )
-        }
-      </>
+          {
+            selectedGates.length > 1 && (
+              <>
+                <ButtonGroup
+                  fullWidth
+                >
+                  <Button onClick={alignX}>
+                    Align X
+                  </Button>
+                  <Button onClick={alignY}>
+                    Align Y
+                  </Button>
+                </ButtonGroup>
+                <ButtonGroup
+                  fullWidth
+                >
+                  <Button onClick={distributeX}>
+                    Distribute X
+                  </Button>
+                  <Button onClick={distributeY}>
+                    Distribute Y
+                  </Button>
+                </ButtonGroup>
+              </>
+            )
+          }
+        </Box>
+      </ListSection>
     )
 
     const labelProps = (
       <>
-        <Typography variant='h5'>Label</Typography>
-        <TextField
-          fullWidth
-          label='Label'
-          variant='filled'
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          onBlur={(e) => {
-            if (e.target.value.length > 0) {
-              updateGates((gate) => ({
-                ...gate,
-                label: e.target.value
-              }))
-            }
-          }}
-        />
+        <ListSection title='Label'>
+          <TextField
+            fullWidth
+            label='Label'
+            variant='filled'
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            onBlur={(e) => {
+              if (e.target.value.length > 0) {
+                updateGates((gate) => ({
+                  ...gate,
+                  label: e.target.value
+                }))
+              }
+            }}
+          />
+        </ListSection>
       </>
     )
 
     return (
-      <form className={classes.form} noValidate>
-        {positionProps}
-        {allHaveLabels && labelProps}
-        {selectedGates.length === 1 && gateProps}
+      <form noValidate>
+        <List>
+          {positionProps}
+          {allHaveLabels && labelProps}
+          {selectedGates.length === 1 && gateProps}
+        </List>
       </form>
     )
   }
