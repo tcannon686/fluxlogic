@@ -102,6 +102,15 @@ const defaultThemeComponents = {
           : SwitchOffSvg
       }
       {...props}
+      onGateClick={(e, gate) => {
+        if (props.simState) {
+          props.onUserInputChanged(
+            gate,
+            !logic.getUserInput(gate, props.simState))
+        } else {
+          props.onGateClick(e, gate)
+        }
+      }}
     />
   ),
   sender: (props) => <LogicGate svg={SenderSvg} {...props} />,

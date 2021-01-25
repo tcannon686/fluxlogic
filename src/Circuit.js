@@ -46,6 +46,8 @@ export default function Circuit (props) {
   const onPinMouseUp = useRefCallback(props.onPinMouseUp)
   const onPinMouseDown = useRefCallback(props.onPinMouseDown)
 
+  const onUserInputChanged = useRefCallback(props.onUserInputChanged)
+
   return (
     <>
       {
@@ -87,6 +89,7 @@ export default function Circuit (props) {
               onGateMouseDown={onGateMouseDown}
               onPinMouseDown={onPinMouseDown}
               onPinMouseUp={onPinMouseUp}
+              onUserInputChanged={onUserInputChanged}
             />
           )
         })

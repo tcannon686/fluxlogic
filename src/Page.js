@@ -3,8 +3,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 
-import * as logic from './logic'
-
 import Wire from './Wire'
 import Circuit from './Circuit'
 import SelectionBox from './SelectionBox'
@@ -159,18 +157,12 @@ const Page = React.forwardRef((props, ref) => {
         onSelectionChanged(newSelection)
         e.stopPropagation()
       }
-    } else if (simState != null) {
-      if (gate.type === 'switch') {
-        onUserInputChanged(gate, !logic.getUserInput(gate, simState))
-      }
     }
   }, [
     selection,
     isEditable,
     didDrag,
-    onSelectionChanged,
-    onUserInputChanged,
-    simState
+    onSelectionChanged
   ])
 
   const onGateMouseDown = useCallback((e, gate) => {
@@ -482,6 +474,7 @@ const Page = React.forwardRef((props, ref) => {
         onPinMouseUp={onPinMouseUp}
         onGateClick={onGateClick}
         onGateMouseDown={onGateMouseDown}
+        onUserInputChanged={onUserInputChanged}
         simState={simState}
       />
       {
