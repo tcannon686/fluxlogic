@@ -52,7 +52,7 @@ export default function Circuit (props) {
         /* Wires */
         gates.map(
           (gate) => gate.inputs
-            .filter((pin) => pin.connections[0])
+            .filter((pin) => pin.connections.length > 0)
             .map((pin) =>
               <Wire
                 key={`${pin.id}-${pin.connections[0].id}`}
