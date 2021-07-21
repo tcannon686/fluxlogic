@@ -1,27 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "933313e1352b4c8ea0f8d8bf38526351",
-    "url": "/fluxlogic/d7c5e2e18a2ec0baaa66.worker.js"
-  },
-  {
-    "revision": "ab0539c270ace7aa90990acdb2fa2349",
+    "revision": "8237394e0d63a46ec2b1be5a3561f59c",
     "url": "/fluxlogic/index.html"
   },
   {
-    "revision": "bc308b50544646d011c0",
+    "revision": "dac71b4ffcfdf1d26eab",
     "url": "/fluxlogic/static/css/main.5ecd60fb.chunk.css"
   },
   {
-    "revision": "4346984883c90fa75134",
-    "url": "/fluxlogic/static/js/2.a2c3fbe2.chunk.js"
+    "revision": "fa539c8139a17f86fe68",
+    "url": "/fluxlogic/static/js/2.b1c72a77.chunk.js"
   },
   {
-    "revision": "4e4e0cc1781d9df56b5dd3d1dd940f36",
-    "url": "/fluxlogic/static/js/2.a2c3fbe2.chunk.js.LICENSE.txt"
+    "revision": "13b606adc605513c694f45f10144bbbe",
+    "url": "/fluxlogic/static/js/2.b1c72a77.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "bc308b50544646d011c0",
-    "url": "/fluxlogic/static/js/main.7306cb94.chunk.js"
+    "revision": "dac71b4ffcfdf1d26eab",
+    "url": "/fluxlogic/static/js/main.382b49f7.chunk.js"
   },
   {
     "revision": "a854bc0ac6c336b98e85",
