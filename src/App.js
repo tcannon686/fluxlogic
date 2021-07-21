@@ -44,9 +44,6 @@ import { upload, download } from './utils'
 
 import { useUndoable } from './hooks'
 
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import SimWorker from 'workerize-loader!./sim.worker'
-
 const drawerWidth = 320
 
 const useStyles = makeStyles((theme) => ({
@@ -159,15 +156,13 @@ function TabPanel (props) {
 function App () {
   const [circuit, setCircuit, undo, redo] = useUndoable(() => logic.circuit([]))
   const [selection, setSelection] = useState(false)
-  const [simState, setSimState] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [copiedGates, setCopiedGates] = useState(null)
   const [contextMenuPos, setContextMenuPos] = useState(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [pageCount, setPageCount] = useState(1)
   const [tab, setTab] = useState(0)
-
-  const simWorker = useRef(new SimWorker())
+  const [simulation, setSimulation] = useState(null)
 
   /* For opening and closing the error snackbar. */
   const [errorMessage, setErrorMessage] = useState(null)
@@ -276,7 +271,7 @@ function App () {
       const duplicates = logic.getDuplicateSenderLabels(circuit.gates)
 
       if (duplicates.length === 0) {
-        simWorker.current.startSimulation(circuit)
+        setSimulation(logic.simulation({ circuit }))
         setIsPlaying(true)
       } else {
         setErrorMessage(
@@ -284,26 +279,17 @@ function App () {
         )
       }
     } else {
-      simWorker.current.stopSimulation()
+      setSimulation(null)
       setIsPlaying(false)
     }
   }
 
   useEffect(() => {
-    let shouldLoop = isPlaying
-
-    const loop = (state) => {
-      if (shouldLoop) {
-        setSimState(state)
-        simWorker.current.getState().then(loop)
-      } else {
-        setSimState(null)
-      }
+    if (isPlaying) {
+      const interval = setInterval(() => simulation.fastForward(10), 16)
+      return () => clearInterval(interval)
     }
-    loop(null)
-
-    return () => { shouldLoop = false }
-  }, [isPlaying])
+  }, [simulation, isPlaying])
 
   const deleteSelection = () => {
     const clone = { ...circuit }
@@ -516,7 +502,7 @@ function App () {
             theme={defaultTheme}
             ref={pageRef}
             selection={selection}
-            simState={simState}
+            simulation={simulation}
             onSelectionChanged={(selection) => {
               setSelection(selection)
             }}
@@ -524,9 +510,9 @@ function App () {
               setCircuit(circuit)
             }}
             onUserInputChanged={(gate, value) => {
-              simWorker.current.setUserInput(gate, value)
+              simulation.setUserInput(gate, value)
             }}
-            editable={!simState}
+            editable={!simulation}
           />
         </Container>
       </main>

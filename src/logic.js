@@ -1,4 +1,7 @@
 import packageJson from '../package.json'
+import { BehaviorSubject, combineLatest, of } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { deepEquals } from './utils'
 
 /*
  * An object mapping gate types to functions.
@@ -460,6 +463,25 @@ function nextState (circuit, prevState) {
 }
 
 /**
+ * Returns true if the given simulation states are the same.
+ */
+function statesEqual (a, b) {
+  return deepEquals(a, b)
+}
+
+/**
+ * Returns true if the given state changed from its previous state.
+ */
+function stateChanged (state) {
+  if (!state) {
+    return true
+  } else {
+    const { prevState, ...currentState } = state
+    return !deepEquals(prevState, currentState)
+  }
+}
+
+/**
  * Returns the sender gate for the given receiver gate.
  */
 function findSender (receiver, circuit) {
@@ -640,6 +662,144 @@ const loadProject = (data) => {
   return JSON.parse(data)
 }
 
+/**
+ * Creates a simulation with the given properties.
+ *
+ * @param {Circuit} props.circuit - The circuit to run the simulation for.
+ * @param {State} props.state - The initial state of the simulation.
+ */
+function simulation (props) {
+  const { state: initialState, circuit } = props
+  let state = initialState
+  const stateSubject = new BehaviorSubject(state)
+  const pinSubjects = new Map()
+  const outputSubjects = new Map()
+  const inputSubjects = new Map()
+  const userInputs = new Map()
+  const userInputsSubscriptions = new Map()
+
+  const getPinOutput = (id, state) => state ? state.outputs[id] : false
+
+  stateSubject.subscribe(state => {
+    pinSubjects.forEach((subject, pinId) => {
+      /* Emit for pins that changed. */
+      if (
+        getPinOutput(pinId, state) !== getPinOutput(pinId, state.prevState)
+      ) {
+        subject.next(getPinOutput(pinId, state))
+      }
+    })
+  })
+
+  /*
+   * Creates a user input subject if it does not exist already and returns it.
+   */
+  const getUserInput = (gate) => {
+    if (!userInputs.has(gate.id)) {
+      const subject = new BehaviorSubject()
+      userInputs.set(gate.id, subject)
+      subject.subscribe(value => {
+        state = nextState(circuit, state)
+        setUserInput(gate, state, value)
+        stateSubject.next(state)
+      })
+    }
+    return userInputs.get(gate.id)
+  }
+
+  const getPin = pinId => {
+    if (!pinSubjects.has(pinId)) {
+      pinSubjects.set(
+        pinId,
+        new BehaviorSubject(getPinOutput(pinId, state))
+      )
+    }
+    return pinSubjects.get(pinId)
+  }
+
+  return {
+    /**
+     * Returns an observable representing getOutputs(gate, currentState).
+     */
+    getOutputs (gate) {
+      if (!outputSubjects.has(gate.id)) {
+        const gatePinSubjects = gate.inputs.map(pin => getPin(pin.id))
+        outputSubjects.set(gate.id, combineLatest(gatePinSubjects))
+      }
+      return outputSubjects.get(gate.id)
+    },
+
+    /**
+     * Returns an observable representing getInputs(gate, currentState).
+     */
+    getInputs (gate) {
+      if (!inputSubjects.has(gate.id)) {
+        const gatePinSubjects = (
+          gate.inputs
+            .map(pin => (
+              pin.connections[0] ? getPin(pin.connections[0]) : of(false)
+            )).map(observable => (
+              observable.pipe(map(x => (x ^ pin.isInverted) === 1))
+            ))
+        )
+        inputSubjects.set(gate.id, combineLatest(gatePinSubjects))
+      }
+      return inputSubjects.get(gate.id)
+    },
+
+    /**
+     * Returns an observable for the current state.
+     */
+    getState () {
+      return stateSubject.asObservable()
+    },
+
+    /**
+     * Advances the simulation one step.
+     */
+    nextState () {
+      if (stateChanged(state)) {
+        state = nextState(circuit, state)
+        stateSubject.next(state)
+      }
+    },
+
+    /**
+     * Advances the simulation multiple steps.
+     */
+    fastForward (n) {
+      for (let i = 0; i < n; i++) {
+        if (stateChanged(state)) {
+          state = nextState(circuit, state)
+          stateSubject.next(state)
+        } else {
+          break
+        }
+      }
+    },
+
+    /**
+     * Sets the source for the user inputs to the given gate as the given
+     * observable. If there was already a source, it is replaced.
+     */
+    setUserInput (gate, observable) {
+      if (userInputsSubscriptions.has(gate.id)) {
+        userInputsSubscriptions.get(gate.id).unsubscribe()
+      }
+      userInputsSubscriptions.set(
+        gate.id,
+        observable.subscribe((...args) => {
+          getUserInput(gate).next(...args)
+        })
+      )
+    },
+
+    getUserInput (gate, value) {
+      return getUserInput(gate).asObservable()
+    }
+  }
+}
+
 export {
   /* Simulation. */
   nextState,
@@ -648,6 +808,8 @@ export {
   getUserInput,
   setUserInput,
   fastForward,
+  statesEqual,
+  stateChanged,
 
   /* Circuit creation. */
   renumber,
@@ -671,6 +833,7 @@ export {
   srDFlipFlop,
   dFlipFlop,
   text,
+  simulation,
 
   /* Utils. */
   removeInvalidConnections,

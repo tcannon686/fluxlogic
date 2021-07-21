@@ -48,7 +48,7 @@ const Page = React.forwardRef((props, ref) => {
   const selection = props.selection
   const theme = props.theme
 
-  const simState = props.simState
+  const simulation = props.simulation
 
   const isEditable = props.editable
   const circuit = props.circuit
@@ -475,7 +475,7 @@ const Page = React.forwardRef((props, ref) => {
         onGateClick={onGateClick}
         onGateMouseDown={onGateMouseDown}
         onUserInputChanged={onUserInputChanged}
-        simState={simState}
+        simulation={simulation}
       />
       {
         isEditable && selectionStart && (

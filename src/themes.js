@@ -3,8 +3,11 @@
  * as well as the position of the pins.
  */
 
-import * as logic from './logic'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+
+import { BehaviorSubject } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { useSubscription } from './hooks'
 
 /* SVGs */
 import AndGateSvg from './assets/and-gate.svg'
@@ -69,67 +72,88 @@ const sevenSegmentSvgs = [
   SevenSegment15Svg
 ]
 
+function Switch (props) {
+  const [isOn, setIsOn] = useState(false)
+  const { gate, simulation } = props
+  const subject = new BehaviorSubject(isOn)
+
+  useEffect(() => {
+    if (simulation) {
+      simulation.setUserInput(gate, subject)
+      const subscription = subject.subscribe(x => {
+        setIsOn(x)
+      })
+      return () => subscription.unsubscribe()
+    } else {
+      setIsOn(false)
+    }
+  }, [subject, simulation, gate])
+
+  return (
+    <LogicGate
+      svg={isOn ? SwitchOnSvg : SwitchOffSvg}
+      {...props}
+      onGateClick={() => {
+        if (simulation) {
+          subject.next(!isOn)
+        }
+      }}
+    />
+  )
+}
+
+function Led (props) {
+  const { gate, simulation } = props
+  const isGlowing = useSubscription((
+    simulation && simulation.getInputs(gate).pipe(map(x => x[0]))
+  ))
+
+  return (
+    <LogicGate
+      svg={(isGlowing && simulation) ? LedGlowSvg : LedSvg}
+      {...props}
+    />
+  )
+}
+
+function SevenSegment (props) {
+  const { gate, simulation } = props
+  const toNumber = x => (
+    x.reduce((a, c, i) => a + Number(c) * (1 << i))
+  )
+  const value = useSubscription(
+    simulation && simulation.getInputs(gate).pipe(map(toNumber))
+  )
+  return (
+    <LogicGate
+      svg={
+        simulation
+          ? sevenSegmentSvgs[value]
+          : SevenSegmentSvg
+      }
+      {...props}
+    />
+  )
+}
+
 const defaultThemeComponents = {
   and: (props) => <LogicGate {...props} svg={AndGateSvg} />,
   or: (props) => <LogicGate svg={OrGateSvg} {...props} />,
   xor: (props) => <LogicGate svg={XorGateSvg} {...props} />,
   buffer: (props) => <LogicGate svg={BufferGateSvg} {...props} />,
-  led: (props) => (
-    <LogicGate
-      svg={
-        props.simState
-          ? (logic.getInputs(props.gate, props.simState)[0]
-            ? LedGlowSvg
-            : LedSvg)
-          : LedSvg
-      }
-      {...props}
-    />
-  ),
+  led: (props) => <Led {...props} />,
   constant: (props) => (
     <LogicGate
       svg={props.gate.value ? OneGateSvg : ZeroGateSvg}
       {...props}
     />
   ),
-  switch: (props) => (
-    <LogicGate
-      svg={
-        props.simState
-          ? (logic.getUserInput(props.gate, props.simState)
-            ? SwitchOnSvg
-            : SwitchOffSvg)
-          : SwitchOffSvg
-      }
-      {...props}
-      onGateClick={(e, gate) => {
-        if (props.simState) {
-          props.onUserInputChanged(
-            gate,
-            !logic.getUserInput(gate, props.simState))
-        } else {
-          props.onGateClick(e, gate)
-        }
-      }}
-    />
-  ),
+  switch: (props) => <Switch {...props} />,
   sender: (props) => <LogicGate svg={SenderSvg} {...props} />,
   receiver: (props) => <LogicGate svg={ReceiverSvg} {...props} />,
   mux: (props) => <LogicGate svg={MuxSvg} {...props} />,
   demux: (props) => <LogicGate svg={DemuxSvg} {...props} />,
-  sevenSegment: (props) => (
-    <LogicGate
-      svg={
-        props.simState
-          ? sevenSegmentSvgs[
-            logic.getInputs(props.gate, props.simState)
-              .reduce((a, c, i) => a + Number(c) * (1 << i))
-          ]
-          : SevenSegmentSvg
-      }
-      {...props}
-    />
-  ),
+  sevenSegment: (props) => <SevenSegment {...props} />,
   srLatch: (props) => <LogicGate svg={SrLatchSvg} {...props} />,
   dLatch: (props) => <LogicGate svg={DLatchSvg} {...props} />,
   dFlipFlop: (props) => <LogicGate svg={DFlipFlopSvg} {...props} />,

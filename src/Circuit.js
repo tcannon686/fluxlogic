@@ -23,7 +23,7 @@ export default function Circuit (props) {
   const selection = props.selection
   const moveAmount = props.moveAmount
 
-  const simState = props.simState
+  const simulation = props.simulation
 
   /* An object that maps each pin to its position. */
   const pinPositions = useMemo(() => {
@@ -77,7 +77,7 @@ export default function Circuit (props) {
 
           return (
             <Component
-              simState={simState}
+              simulation={simulation}
               gate={gate}
               x={x}
               y={y}

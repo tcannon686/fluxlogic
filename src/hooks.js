@@ -1,6 +1,22 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 
 /**
+ * Subscribe to an observable and return its value.
+ */
+export const useSubscription = (observable) => {
+  const [state, setState] = useState()
+  useEffect(() => {
+    if (observable) {
+      const subscription = observable.subscribe(value => {
+        setState(value)
+      })
+      return () => subscription.unsubscribe()
+    }
+  }, [observable])
+  return state
+}
+
+/**
  * Creates a callback function that calls the given callback by reference. This
  * is useful when multiple components need to use the same callback, and you
  * don't want to trigger a rerender of all the components when the callback

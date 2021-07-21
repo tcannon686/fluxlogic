@@ -2,6 +2,31 @@
  * Utility functions
  */
 
+/** Helper function to tell if an object is primitive. */
+export function isPrimitive (object) {
+  return object !== Object(object)
+}
+
+/** Helper function to compare objects. */
+export function deepEquals (a, b) {
+  if (a === b) {
+    return true
+  } else if (isPrimitive(a) || isPrimitive(b)) {
+    return a === b
+  } else {
+    if (Object.keys(a).length !== Object.keys(b).length) {
+      return false
+    } else {
+      for (const key in a) {
+        if (!(key in b) || !deepEquals(a[key], b[key])) {
+          return false
+        }
+      }
+      return true
+    }
+  }
+}
+
 /*
  * Prompts the user to save the given text as the given filename.
  */
